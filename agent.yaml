@@ -17,6 +17,7 @@ skills:
   - ai-regression-testing
   - android-clean-architecture
   - api-design
+  - ai-skill-council
   - architecture-decision-records
   - article-writing
   - autonomous-loops
@@ -217,6 +218,7 @@ commands:
   - save-session
   - sessions
   - setup-pm
+  - skill-bet
   - skill-create
   - skill-health
   - tdd
