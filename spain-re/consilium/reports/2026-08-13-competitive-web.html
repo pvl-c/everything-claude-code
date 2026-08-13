@@ -1,0 +1,336 @@
+<title>Конкуренты и план обгона</title>
+<style>
+  :root {
+    --paper: #FAFAF7; --ink: #182420; --muted: #5A6A62;
+    --accent: #1F6F54; --accent-soft: #E4EFE9;
+    --warn: #A85B1C; --warn-soft: #F7EBDD;
+    --stop: #9B2C2C; --stop-soft: #F7E4E4;
+    --line: #D9DFD9; --card: #FFFFFF; --code: #EEF2EE;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --paper: #131A17; --ink: #E6ECE8; --muted: #93A29A;
+      --accent: #5FBF9A; --accent-soft: #1C2F28;
+      --warn: #E0985C; --warn-soft: #2E2318;
+      --stop: #E88B8B; --stop-soft: #2E1B1B;
+      --line: #2A3630; --card: #1A2420; --code: #202B26;
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper: #131A17; --ink: #E6ECE8; --muted: #93A29A;
+    --accent: #5FBF9A; --accent-soft: #1C2F28;
+    --warn: #E0985C; --warn-soft: #2E2318;
+    --stop: #E88B8B; --stop-soft: #2E1B1B;
+    --line: #2A3630; --card: #1A2420; --code: #202B26;
+  }
+  body { background: var(--paper); color: var(--ink);
+    font-family: "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+    line-height: 1.55; margin: 0; padding: 0 20px 80px; }
+  .wrap { max-width: 880px; margin: 0 auto; }
+  header.top { padding: 44px 0 8px; border-bottom: 3px solid var(--accent); }
+  .eyebrow { font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--accent); font-weight: 600; margin: 0 0 10px; }
+  h1 { font-family: Georgia, "Times New Roman", serif; font-size: clamp(30px, 5vw, 42px); line-height: 1.12; margin: 0 0 10px; text-wrap: balance; font-weight: 700; }
+  .meta { color: var(--muted); font-size: 14px; margin: 0 0 26px; }
+  h2 { font-family: Georgia, "Times New Roman", serif; font-size: 25px; margin: 48px 0 14px; line-height: 1.2; text-wrap: balance; }
+  h2 .num { color: var(--accent); }
+  h3 { font-size: 17.5px; margin: 30px 0 10px; }
+  p { margin: 0 0 14px; }
+  strong { font-weight: 650; }
+  .verdict { background: var(--accent-soft); border-left: 4px solid var(--accent); padding: 18px 20px; border-radius: 0 8px 8px 0; margin: 26px 0; }
+  .verdict p:last-child, .callout-warn p:last-child, .callout-stop p:last-child, .callout-warn ol:last-child { margin-bottom: 0; }
+  .callout-warn { background: var(--warn-soft); border-left: 4px solid var(--warn); padding: 14px 18px; border-radius: 0 8px 8px 0; margin: 18px 0; }
+  .callout-stop { background: var(--stop-soft); border-left: 4px solid var(--stop); padding: 14px 18px; border-radius: 0 8px 8px 0; margin: 18px 0; }
+  ul, ol { margin: 0 0 16px; padding-left: 22px; }
+  li { margin-bottom: 8px; }
+  li::marker { color: var(--accent); font-weight: 600; }
+  .tablewrap { overflow-x: auto; margin: 0 0 18px; }
+  table { border-collapse: collapse; width: 100%; font-size: 14.5px; min-width: 560px; }
+  th { text-align: left; font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); border-bottom: 2px solid var(--line); padding: 8px 12px 8px 0; }
+  td { border-bottom: 1px solid var(--line); padding: 10px 12px 10px 0; vertical-align: top; }
+  td.n { font-variant-numeric: tabular-nums; white-space: nowrap; }
+  tr.us td { background: var(--stop-soft); font-weight: 600; }
+  tr.us td:first-child { border-left: 3px solid var(--stop); padding-left: 10px; }
+  .yes { color: var(--accent); font-weight: 700; }
+  .no { color: var(--stop); font-weight: 700; }
+  .move { background: var(--card); border: 1px solid var(--line); border-left: 4px solid var(--accent); border-radius: 0 10px 10px 0; padding: 18px 20px; margin: 0 0 14px; }
+  .move-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 10px; margin-bottom: 8px; }
+  .move-n { font-family: Georgia, serif; font-size: 24px; font-weight: 700; color: var(--accent); line-height: 1; }
+  .move-title { font-size: 18px; font-weight: 650; }
+  .move-when { font-size: 12.5px; color: var(--muted); letter-spacing: .04em; text-transform: uppercase; }
+  .move p:last-child, .move ul:last-child { margin-bottom: 0; }
+  details { background: var(--card); border: 1px solid var(--line); border-radius: 10px; margin: 0 0 10px; overflow: hidden; }
+  details[open] { border-color: var(--accent); }
+  summary { cursor: pointer; padding: 13px 16px; font-weight: 600; list-style: none; display: flex; align-items: baseline; gap: 10px; }
+  summary::-webkit-details-marker { display: none; }
+  summary::before { content: "▸"; color: var(--accent); flex: none; transition: transform .15s; }
+  details[open] summary::before { transform: rotate(90deg); }
+  @media (prefers-reduced-motion: reduce) { summary::before { transition: none; } }
+  summary .role { color: var(--muted); font-weight: 400; font-size: 13.5px; }
+  .dbody { padding: 0 18px 16px; border-top: 1px solid var(--line); }
+  .dbody p:first-child, .dbody ul:first-child { margin-top: 14px; }
+  .tag { display: inline-block; font-size: 11.5px; font-weight: 600; letter-spacing: .05em; padding: 1px 8px; border-radius: 99px; background: var(--code); color: var(--muted); white-space: nowrap; }
+  blockquote { margin: 18px 0; padding: 14px 0 14px 20px; border-left: 4px solid var(--accent); font-size: 17px; }
+  blockquote p:last-child { margin-bottom: 0; }
+  .footer-note { color: var(--muted); font-size: 13px; margin-top: 46px; border-top: 1px solid var(--line); padding-top: 14px; }
+  a { color: var(--accent); }
+</style>
+<div class="wrap">
+  <header class="top">
+    <p class="eyebrow">Консилиум Compass Key Realty · Отчёт №4 · 13.08.2026</p>
+    <h1>Конкуренты и план обгона</h1>
+    <p class="meta">Аудит сайтов конкурентов · сравнение с нашим · позиционирование · продукты и цены · план на два года · 6 аналитиков, ~146 поисковых запросов</p>
+  </header>
+
+  <div class="callout-warn">
+    <p><strong>О методе.</strong> Прямой доступ к сайтам заблокирован политикой egress организации (403 на CONNECT) — это касается WebFetch, браузера и curl. <strong>Постраничного обхода сайтов не было:</strong> структура и содержание конкурентов восстановлены по поисковому индексу; наш сайт — по детальному снимку от 10.08.2026. Пометка «нет данных» значит «поиск не проиндексировал», а не «на сайте отсутствует». Для настоящего постраничного аудита нужно добавить домены в allowlist окружения.</p>
+  </div>
+
+  <h2><span class="num">0.</span> Три правки к предыдущему отчёту</h2>
+  <div class="callout-stop">
+    <p>Проверка на большей глубине опровергла три утверждения рыночного среза. Фиксирую прямо, потому что они меняли бы решения:</p>
+    <ol>
+      <li><strong>«Buy-side по кемпингам не представляет никто» — неверно.</strong> ACSI Broker Services декларирует <strong>и sell-side, и buy-side</strong> мандаты, включая закрытые процессы «Secret Sale» с раскрытием под NDA.</li>
+      <li><strong>Concerto сильнее, чем считалось:</strong> 40+ объектов в Испании, выделенный специалист по Испании и Португалии, отдельный раздел «Buy a Camping».</li>
+      <li><strong>Lucas Fox — будущий прямой конкурент, а не «люксовый жилой».</strong> С I квартала 2025 принадлежит группе Dils, объявлен выход в коммерцию и hospitality и рост до ~400 человек за три года.</li>
+    </ol>
+    <p><strong>Вывод: ниша не пустая, она недообслуженная.</strong> Позицию надо строить не на «там никого нет», а на признаке, который конкуренты не могут повторить.</p>
+  </div>
+
+  <h2><span class="num">1.</span> Отраслевой стандарт сайта, до которого мы не дотягиваем</h2>
+  <div class="tablewrap">
+  <table>
+    <tr><th>Стандарт</th><th>Кто это делает</th><th>У нас</th></tr>
+    <tr><td>4–11 языков, RU почти всегда в наборе</td><td>Lucas Fox (10), Sotheby's (8), Rusol Prime (10+), IMMO365 (7)</td><td class="no">только RU</td></tr>
+    <tr><td>Отдельная посадочная на каждый тип актива и географию</td><td>все шесть нишевых игроков</td><td class="no">одностраничник</td></tr>
+    <tr><td>Экономика в карточке объекта</td><td>Carlton (выручка + EBITDA), GG (ADR/RevPAR/NOI)</td><td class="no">фото и цена</td></tr>
+    <tr><td>Конфиденциальный контур: тизер → NDA → меморандум</td><td>ACSI («Secret Sale»), The Hotell, Carlton</td><td class="no">нет</td></tr>
+    <tr><td>Собственная аналитика как продукт</td><td>Christie &amp; Co (Snapshot H1 2026), Lucas Fox (Market Report)</td><td class="no">нет</td></tr>
+  </table>
+  </div>
+
+  <h3>Чего нет ни у кого — наши четыре возможности</h3>
+  <ol>
+    <li><strong>Связки «доходный актив + жизнь владельца в Испании».</strong> Все шесть нишевых сайтов — брокеры актива. Ни на одном нет лицензий, ВНЖ, налогов нерезидента, ипотеки рядом с объектом.</li>
+    <li><strong>Платного входного продукта в сегменте €1–10 млн.</strong> Внизу рынка пакеты €900–4 500 по жилью, вверху — институциональный консалтинг без прайса. Между ними пусто.</li>
+    <li><strong>Сквозной связки «купил → лицензировал → запустил → отчитываюсь».</strong> Сделка, лицензия и управление продаются тремя разными компаниями.</li>
+    <li><strong>Обещания «право актива работать дальше».</strong> 179 из 357 кемпингов Каталонии под паводковой проверкой — ни один игрок на этом не строит позицию, <strong>потому что sell-side физически не может продавать сомнение</strong>.</li>
+  </ol>
+
+  <h3>Что есть у нас, чего нет у них</h3>
+  <ul>
+    <li><strong>Глубокий FAQ по механике испанской сделки</strong> — arras, Cédula, ITE, энергосертификат, NIE, доверенность, ипотека нерезиденту 60–70%. У нишевых конкурентов такого блока в индексе не видно</li>
+    <li><strong>Юристы внутри команды публично</strong> — 2 из 6 человек, включая иммиграционного. У ACSI/Concerto/The Hotell на сайте брокеры, не юристы</li>
+    <li><strong>Пост-сделочная жизнь владельца</strong> — ВНЖ, счета, страхование, медицина. Ни один нишевый сайт этого не предлагает</li>
+    <li><strong>Витрина уже в целевом чеке</strong> — 4 из 5 объектов €1 млн+</li>
+    <li><strong>Кейсов с цифрами нет ни у нас, ни у них</strong> — поле свободно для обоих</li>
+  </ul>
+
+  <h2><span class="num">2.</span> Сравнительная таблица</h2>
+  <div class="tablewrap">
+  <table>
+    <tr><th></th><th>Языки</th><th>Разделы</th><th>Экономика в карточке</th><th>NDA</th><th>Аналитика</th><th>Гонорар</th></tr>
+    <tr><td><strong>GG Real Estate</strong></td><td>RU, EN +8</td><td>12+, вкл. hotel/commercial</td><td class="yes">ADR/RevPAR/NOI</td><td>нет данных</td><td>блог + гайды</td><td class="yes">раскрыт</td></tr>
+    <tr><td><strong>ACSI Broker</strong></td><td>EN, DE, IT+</td><td>offer, страны, брокеры</td><td>нет данных</td><td class="yes">Secret Sale</td><td>16 000 кемпингов</td><td>нет данных</td></tr>
+    <tr><td><strong>Concerto</strong></td><td>ES, CA, EN, FR</td><td>5 + форма покупателя</td><td>нет данных</td><td>нет данных</td><td>нет</td><td class="yes">раскрыт</td></tr>
+    <tr><td><strong>Carlton</strong></td><td>EN, FR</td><td>срезы по типу, news</td><td class="yes">выручка + EBITDA</td><td>нет данных</td><td>гайд 2025</td><td>нет данных</td></tr>
+    <tr><td><strong>The Hotell</strong></td><td>EN, IT</td><td>buying / selling / blog</td><td>«vetted», €1–20 млн</td><td class="yes">приватно</td><td>SEO-рейтинги</td><td>нет данных</td></tr>
+    <tr><td><strong>Christie &amp; Co</strong></td><td>EN + локали</td><td>полный корпоративный</td><td>нет данных</td><td>нет данных</td><td class="yes">отчёты 2026</td><td>нет данных</td></tr>
+    <tr><td><strong>The Property Finders</strong></td><td>EN</td><td>About / Fees / FAQ</td><td>— (жильё)</td><td>—</td><td>блог</td><td class="yes">€900 + 2,5%</td></tr>
+    <tr><td><strong>Lucas Fox</strong></td><td>10</td><td>7+, оценка онлайн</td><td>— (жильё)</td><td>off-market</td><td class="yes">Market Report</td><td>нет данных</td></tr>
+    <tr class="us"><td>compasskeyrealty.com</td><td>RU</td><td>одностраничник</td><td>фото + цена</td><td>нет</td><td>нет</td><td>нет</td></tr>
+  </table>
+  </div>
+
+  <h2><span class="num">3.</span> Позиционирование: координата, которую можно занять</h2>
+  <p>Оси, по которым расходится рынок: <strong>сторона сделки</strong> (продавец ↔ покупатель) · <strong>класс актива</strong> (метры ↔ операционный бизнес с лицензией) · <strong>чек</strong> (€10 млн+ ↔ €1–10 млн ↔ traspaso) · <strong>язык входа</strong> (ES/EN ↔ RU ↔ NL ↔ <strong>FR — никем не занят в коммерции</strong>) · <strong>что продаётся</strong> (доступ ↔ <strong>суждение</strong>).</p>
+
+  <blockquote>
+    <p><strong>«Мы работаем только на покупателя и начинаем не с объекта, а с проверки его права работать дальше: лицензия, вода, паводок, франжа — до того, как вы назовёте цену. Кемпинги, масии и малые отели Каталонии, €1–10 млн».</strong></p>
+    <p>Короткая форма: «Покупательский советник по операционным активам Каталонии. Мы чаще отговариваем, чем продаём».</p>
+  </blockquote>
+
+  <h3>Тест «мог бы так сказать конкурент?»</h3>
+  <div class="tablewrap">
+  <table>
+    <tr><th>Игрок</th><th>Мог бы?</th><th>Почему</th></tr>
+    <tr><td>Concerto, Carlton, ACSI, E&amp;V, IMMO365</td><td class="yes">Нет</td><td>Мандаты продавцов — обещание сомнения разрушает их экономику</td></tr>
+    <tr><td>Christie &amp; Co</td><td>Технически да, экономически нет</td><td>Сегмент €1–10 млн вне их выборки</td></tr>
+    <tr><td>The Property Finders</td><td class="yes">Нет</td><td>Жильё, не операционные активы</td></tr>
+    <tr><td><strong>GG Real Estate</strong></td><td class="no">Да — единственный провал</td><td>Buyer-only + underwriting + licensing DD уже в их текстах</td></tr>
+  </table>
+  </div>
+  <p>Разводит нас с GG три вещи, и позицию надо сузить именно до них: <strong>класс актива</strong> (кемпинг/масия против городского отеля), <strong>география</strong> (горная и внутренняя Каталония против Барселоны/Мадрида), <strong>гидрологический и лицензионный риск как первый шаг</strong> — этого в их формулировках нет.</p>
+
+  <h3>Защищаемость</h3>
+  <div class="tablewrap">
+  <table>
+    <tr><th>Срок</th><th>Что скопируют</th></tr>
+    <tr><td class="n">За месяц</td><td>Слова «работаем только на покупателя», страницу про паводковый риск, сам чек-лист (декрет публичен)</td></tr>
+    <tr><td class="n">3–6 мес</td><td>Чек-лист как платную услугу, наём гидролога/юриста, NL- и FR-менеджера. <strong>Главная угроза — GG Real Estate</strong></td></tr>
+    <tr><td class="n">6–12 мес</td><td>ACSI может добавить каталонский buy-side, но её деньги на стороне продавца</td></tr>
+    <tr><td class="n">1–2 года+</td><td class="yes">Собственную базу сделок €1–10 млн, репутацию «того, кто отговаривает», отношения с владельцами и ayuntamientos, архив отказов</td></tr>
+  </table>
+  </div>
+  <p><strong>Защищает не формулировка, а архив.</strong></p>
+
+  <h2><span class="num">4.</span> Поисковая видимость: где дыра</h2>
+  <ol>
+    <li><strong>Транзакционные запросы отданы агрегаторам</strong> на всех языках — конкурировать листингами бессмысленно</li>
+    <li><strong>Buy-side как услуга существует, но только в жилье</strong> и вне Каталонии. Коммерческий buy-side советник не появился в выдаче <strong>ни на одном языке</strong></li>
+    <li><strong>Информационный слой ниши практически пуст</strong></li>
+  </ol>
+  <div class="tablewrap">
+  <table>
+    <tr><th>Свободная тема</th><th>Что сейчас в выдаче</th></tr>
+    <tr><td>Сколько стоит <strong>купить</strong> кемпинг в Испании</td><td>Цены за ночь для туристов</td></tr>
+    <tr><td>«camping kopen Spanje» с бизнес-намерением</td><td>Каталоги бронирования отпуска</td></tr>
+    <tr><td>Что значит статус лицензии кемпинга <strong>для покупателя</strong></td><td>Только тексты gencat и «как открыть»</td></tr>
+    <tr><td>Due diligence кемпинга: traspaso vs asset deal</td><td>Общие юр-гайды по <strong>жилой</strong> покупке</td></tr>
+    <tr><td>Масия → сельский туризм vs отель</td><td>Один материал у cottageproperties.es</td></tr>
+    <tr><td>Buy-side по коммерции в Каталонии</td><td class="yes">Пусто на всех пяти языках</td></tr>
+  </table>
+  </div>
+  <p><strong>Быстрые победы (квартал):</strong> NL «camping kopen Spanje/Catalonië» → EN+NL «how much does it cost to buy a campsite in Spain» → ES+EN «licencia camping Cataluña глазами покупателя» → EN «buying a hotel in Girona».</p>
+  <p><strong>Чего не делать:</strong> конкурировать за «hotel for sale Catalonia» и «camping for sale Spain» (8 из 8 результатов — агрегаторы) и лезть в «personal shopper inmobiliario Barcelona» (плотно и не наш клиент).</p>
+  <div class="callout-warn"><p>Данных о частотности запросов нет — приоритеты построены на <strong>пустоте выдачи</strong>, а не на объёме спроса. Перед бюджетированием проверить в Keyword Planner/Ahrefs.</p></div>
+
+  <h2><span class="num">5.</span> Деньги: рынок и наша линейка</h2>
+  <ul>
+    <li><strong>Комиссия продавца (Испания):</strong> 3–6% + 21% IVA, медиана ~5%</li>
+    <li><strong>Buy-side / personal shopper:</strong> 1–3% с минимумом €3 000–6 000</li>
+    <li><strong>The Property Finders (эталон продуктизации):</strong> €900 невозвратный сбор + 2,5% от цены</li>
+    <li><strong>GG Real Estate:</strong> комиссия вне цены актива, платить может продавец <em>или</em> покупатель; «только за результат, без входных платежей»</li>
+    <li><strong>Голландские фикс-пакеты:</strong> Van Dam Estates €3 000 / €4 500, HouseVision от €995 — прямой конкурент по кошельку голландского покупателя</li>
+  </ul>
+
+  <div class="tablewrap">
+  <table>
+    <tr><th></th><th>Продукт</th><th>Цена</th><th>Зачем</th></tr>
+    <tr><td class="n"><strong>P0</strong></td><td>Экспресс-скрининг объекта клиента, 5 дней</td><td class="n">€1 500–2 500</td><td>Отсекает туристов, легитимирует экспертизу, засчитывается в P2. <strong>Аналога в нише нет</strong></td></tr>
+    <tr><td class="n"><strong>P1</strong></td><td>Инвестиционный мандат-старт, 3 мес</td><td class="n">€5 000–7 500</td><td>Критерии, карта рынка, лонг-лист off-market, 3–5 объектов с расчётом</td></tr>
+    <tr><td class="n"><strong>P2</strong></td><td>Сопровождение сделки</td><td class="n">2–3%, мин. €30 000</td><td>От LOI и DD до нотариуса; ретейнер P1 засчитывается</td></tr>
+    <tr><td class="n"><strong>P3</strong></td><td>Лицензионный запуск</td><td class="n">€8 000–15 000</td><td>Rural tourism / hotel licence, capacidad. <strong>Нет ни у кого как платного продукта</strong></td></tr>
+    <tr><td class="n"><strong>P4</strong></td><td>Подбор оператора</td><td class="n">1 мес. выручки</td><td>—</td></tr>
+    <tr><td class="n"><strong>P5</strong></td><td>Asset watch</td><td class="n">€500–1 000/мес</td><td>Квартальная отчётность, бенчмарк, контроль оператора</td></tr>
+  </table>
+  </div>
+  <p class="meta">Цены — предложение консилиума, а не наблюдаемая рыночная ставка. Границы прописать явно: комиссия отдельно от цены актива с указанием, кто платит; объекты ниже €1 млн не берём; юридические заключения дают партнёры.</p>
+
+  <h2><span class="num">6.</span> План на два года</h2>
+
+  <div class="move">
+    <div class="move-head"><span class="move-n">1</span><span class="move-title">Убрать конфликт и выбрать фокус</span><span class="move-when">месяцы 0–3</span></div>
+    <p><strong>Это первое, потому что без него мандат покупателя не продаётся, а всё остальное — косметика, которую копируют за месяц.</strong></p>
+    <ul>
+      <li>Выбрать <strong>один класс актива × одну географию</strong>: кемпинги и масии, горная и внутренняя Каталония + Жирона</li>
+      <li><strong>Снять sell-side листинги с сайта</strong> или юридически развести бренды. Витрина из 5 объектов и заявка на buy-side-чистоту несовместимы</li>
+      <li>Опубликовать <strong>модель вознаграждения</strong> (P0/P1/P2) и письменный отказ от комиссии продавца по целевому классу</li>
+      <li>Дешёвые сигналы доверия: <strong>номер AICAT в подвале</strong>, число языков команды, RC profesional</li>
+      <li>Убрать с первого экрана аренду и «идеальную недвижимость» — сейчас он продаёт риелтора, а не советника</li>
+    </ul>
+  </div>
+
+  <div class="move">
+    <div class="move-head"><span class="move-n">2</span><span class="move-title">Реестр «право работать»</span><span class="move-when">месяцы 0–6</span></div>
+    <p><strong>Один актив даёт три вещи сразу:</strong> платный DD-продукт, повод для outreach к владельцам и доказательство компетенции при нулевом трек-рекорде.</p>
+    <ul>
+      <li>357 кемпингов + масии целевых комарок с проверкой по Decret llei 17/2025, zona de flujo preferente, франже 25 м, воде и лицензиям</li>
+      <li>Оформить как <strong>P0 «Экспресс-скрининг»</strong> — платный продукт</li>
+      <li><strong>Публиковать разборы отклонённых объектов</strong> — это то, что не копируется, потому что требует репутационной смелости</li>
+    </ul>
+  </div>
+
+  <div class="move">
+    <div class="move-head"><span class="move-n">3</span><span class="move-title">Первая сделка и первые языки</span><span class="move-when">месяцы 3–9</span></div>
+    <ul>
+      <li><strong>Один платный мандат покупателя с ретейнером</strong> — пусть маленький, пусть со скидкой; со-мандат с юристом ради подписи под документом. <strong>Первая закрытая сделка важнее её маржи</strong></li>
+      <li><strong>EN-версия сайта</strong> + две сегментные страницы: «Кемпинги Каталонии и Пиренеев», «Отели и готовый бизнес €1–10 млн»</li>
+      <li><strong>NL-лендинг</strong> под свободный запрос «camping kopen Spanje/Catalonië» — выдача занята турбронированием, конкурентов-советников нет</li>
+      <li>Карточка объекта под инвестора: цена, места/номера, выручка и EBITDA (или «по запросу»), лицензия, загрузка, структура сделки</li>
+      <li>Страница «Как мы работаем на стороне покупателя» — 6 шагов с квалификацией (бюджет, срок, proof of funds) и календарём</li>
+    </ul>
+  </div>
+
+  <div class="move">
+    <div class="move-head"><span class="move-n">4</span><span class="move-title">Контур доверия и глубина</span><span class="move-when">месяцы 9–18</span></div>
+    <ul>
+      <li><strong>NDA-контур:</strong> публичный тизер на страницу → форма → NDA → меморандум (догоняет ACSI)</li>
+      <li><strong>Off-market раздел</strong> по логике E&amp;V Private Office: не каталог, а «сформулируйте мандат — получите объекты, которых нет на порталах». Для тонкого портфеля приватность заменяет количество</li>
+      <li><strong>Buying Guide</strong> из существующего FAQ — сырьё уже есть, нужна упаковка</li>
+      <li><strong>Первый квартальный отчёт</strong> «Кемпинги и малые отели Каталонии: цены и доходность», 4 страницы, формат Christie &amp; Co — в сегменте, где институционалов нет</li>
+      <li><strong>ES/CA-версия</strong> — сторона продавца и доступ к traspaso-потоку</li>
+      <li><strong>3 кейса с цифрами:</strong> объект, задача, что нашли в due diligence, результат</li>
+      <li>Owner-outreach по преемственности: скрипт не «продаёте?», а «оценка и сценарий преемственности»</li>
+    </ul>
+  </div>
+
+  <div class="move">
+    <div class="move-head"><span class="move-n">5</span><span class="move-title">Продукт и защищаемость</span><span class="move-when">месяцы 18–24</span></div>
+    <ul>
+      <li><strong>P3 Лицензионный запуск</strong> как платный продукт — того, чего нет ни у кого</li>
+      <li><strong>P5 Asset watch</strong> — постсделочный контур, превращающий сделку в удержание</li>
+      <li><strong>Собственная база сделок €1–10 млн</strong> — единственный актив, который через два года нельзя скопировать</li>
+      <li>FR-вход: французы — 34,8% нерезидентов Каталонии и никем не обслужены в коммерции</li>
+      <li>Счётчик отказов на сайте: «проверено N объектов — рекомендовано M»</li>
+    </ul>
+  </div>
+
+  <div class="callout-stop">
+    <p><strong>Чего НЕ делать первым:</strong> редизайн сайта · соцсети · Италия и Австрия · страховая воронка. Всё это имеет смысл только после Хода 1.</p>
+  </div>
+
+  <h2><span class="num">7.</span> Ответная реакция: кто и когда ударит</h2>
+  <div class="tablewrap">
+  <table>
+    <tr><th>Кто</th><th>Срок</th><th>Что сделает</th><th>Наш контр-ход</th></tr>
+    <tr><td><strong>Concerto</strong></td><td class="n">3–6 мес</td><td>«Мы покажем те же объекты бесплатно, платит продавец»</td><td>Их объекты не проверены по декретам — сравнивать не цену услуги, а глубину проверки</td></tr>
+    <tr><td><strong>GG Real Estate</strong></td><td class="n">6–9 мес</td><td>Самый дешёвый копикат: контент по Жироне, найм, «у нас тоже buy-side». <strong>Опаснее всех</strong></td><td>Уйти в класс актива и географию, куда им дорого идти; накопить архив отказов</td></tr>
+    <tr><td><strong>ACSI</strong></td><td class="n">6–12 мес</td><td>Скорее не атака, а предложение стать локальным агентом</td><td>Брать — но <strong>без эксклюзива на buy-side</strong></td></tr>
+    <tr><td><strong>Dils Lucas Fox</strong></td><td class="n">12–24 мес</td><td>Объявленная экспансия в коммерцию и hospitality</td><td>К этому моменту иметь собственную базу и трек-рекорд</td></tr>
+    <tr><td><strong>Christie &amp; Co</strong></td><td class="n">24+ мес</td><td>Перехватят клиента вверх, когда он вырастет до €15 млн</td><td>Принять как норму: это признак успеха, а не поражения</td></tr>
+  </table>
+  </div>
+
+  <h2><span class="num">8.</span> Red team: где план рассыплется</h2>
+  <ol>
+    <li><strong>Экономика.</strong> 2–4 закрытые сделки в год × €2 млн × 2–3% = €120–180 тыс. вала при полной загрузке. <strong>Отказ от аренды и релокации убивает текущий кэшфлоу раньше, чем новый заработает.</strong> Это главный убийца плана, а не конкуренты.</li>
+    <li><strong>Пропускная способность.</strong> Зрелые бутики берут &lt;20 мандатов в год на старшего партнёра; без трек-рекорда — 2–4.</li>
+    <li><strong>Замкнутый круг:</strong> нет трек-рекорда → нет мандата → нет трек-рекорда. Размыкается только со-мандатом с носителем репутации или первой сделкой в убыток.</li>
+    <li><strong>Русскоязычный одностраничник</strong> против аудитории, где 34,8% нерезидентов Каталонии — французы. Язык сайта — антисигнал.</li>
+    <li><strong>Витрина из 5 объектов — это sell-side.</strong> Buy-side-чистоту и листинги нельзя заявлять одновременно.</li>
+    <li><strong>Гипотеза NL/BE × кемпинг × горы не измерена.</strong></li>
+    <li><strong>Off-market база ACSI и Concerto объективно больше</strong> — конкурировать шириной нельзя, только глубиной проверки.</li>
+  </ol>
+
+  <h2><span class="num">9.</span> Отчёты аналитиков</h2>
+  <p class="meta">Дайджесты; полные тексты с источниками — в <span class="tag">consilium/work/2026-08-13-competitive-web/</span></p>
+
+  <details><summary>W1 · Ясмин Тахир <span class="role">— аудит сайтов ниши</span></summary><div class="dbody">
+    <p>Три вещи есть у всех: отдельная посадочная на каждый тип актива, экономика в карточке (Carlton печатает выручку и EBITDA), конфиденциальность как продукт. Нет ни у кого — связки «доходный актив + жизнь владельца». GG Real Estate — полноценный многостраничник с 12+ разделами, гайдами и раскрытой моделью «покупателю — ноль»; ACSI — механизм «Secret Sale» с NDA; Concerto — самая честная модель без двойной комиссии; Christie &amp; Co — эталон аналитики. 9 приоритетов достройки сайта.</p>
+  </div></details>
+
+  <details><summary>W2 · Гаспар Луна <span class="role">— люкс, buy-side, русскоязычные, NL/BE</span></summary><div class="dbody">
+    <p>Отраслевой минимум премиального сайта — 5 элементов, наш сайт не выполняет ни один. Lucas Fox публикует €796 млн объёма сделок и базу 135 000 клиентов; E&amp;V имеет институт Private Office по образцу private banking. Ключевая находка по NL/BE: сайт говорит с покупателем от его страны (IMMO365 — «De Nederlanders kiezen ons»), а Home Costa Brava публикует номера API и AICAT — дешёвый и сильный сигнал доверия, которого у нас нет. 7 вещей к заимствованию.</p>
+  </div></details>
+
+  <details><summary>W3 · Пётр Новак <span class="role">— поисковая видимость</span></summary><div class="dbody">
+    <p>26 запросов на пяти языках. Транзакционные запросы везде отданы агрегаторам. Buy-side терминологически оформлен, но только в жилье и вне Каталонии. Самая явная дыра — нидерландские коммерческие запросы: «camping kopen Spanje Costa Brava» даёт целиком туристическую выдачу, коммерческого результата ноль. Каталанский — язык доверия, а не привлечения. План: 4 быстрые победы, 3 средних, 3 долгих ставки; чего делать не надо.</p>
+  </div></details>
+
+  <details><summary>W4 · Ирина Валь <span class="role">— позиционирование</span></summary><div class="dbody">
+    <p>Собраны фактические обещания 12 конкурентов их словами. Карта по 6 осям. Четыре незанятые координаты, из них две перспективные: buy-side по кемпингам и масиям (пусто, потому что трудно) и «право актива работать дальше» (пусто, потому что sell-side не может продавать сомнение). Позиция проходит тест у всех, кроме GG Real Estate — отсюда требование сузить до класса актива, географии и гидрологического риска.</p>
+  </div></details>
+
+  <details><summary>W5 · Эмиль Дюран <span class="role">— офферы и цены</span></summary><div class="dbody">
+    <p>Рынок разделён на три несмешивающихся слоя: брокеры активов (ставки не публикуют), buy-side (публикуют — TPF €900 + 2,5%), консалтинг (продукты есть, цен нет). <strong>Ни один игрок не собирает все три слоя для чека €1–10 млн.</strong> Пять вещей, которых нет ни у кого. Предложена линейка P0–P5 с ценами и явными границами ответственности.</p>
+  </div></details>
+
+  <details><summary>W6 · Ноа Бергер <span class="role">— плейбук претендента и red team</span></summary><div class="dbody">
+    <p>Внёс три правки к предыдущему отчёту (ACSI делает buy-side, Concerto сильнее, Lucas Fox куплен Dils и идёт в коммерцию). Структурные слабости конкурентов, которые они не могут исправить: экономика мандата у институционалов (в нижнем сегменте &gt;70% сделок закрывают бутики), dual agency, командировочная модель ACSI, конфликт бренда. Шесть асимметрий малого игрока, таблица ответных реакций по срокам, семь пунктов red team и порядок первых трёх ходов.</p>
+  </div></details>
+
+  <h2><span class="num">10.</span> Что осталось непроверенным</h2>
+  <p>Из-за блокировки прямого доступа требуют ручной проверки: точный размер вознаграждения Casamona и Inspire · актуальность Market Report E&amp;V за 2026 · языковые версии EN/ES у Rusol Prime · hreflang-разметка мультиязычных сайтов · наличие NDA-контура и кейсов с цифрами у GG Real Estate · ставки Concerto, ACSI, Carlton, Christie &amp; Co (не публикуются) · частотность целевых поисковых запросов.</p>
+
+  <p class="footer-note">Отчёт консилиума Compass Key Realty №4 · синтез координатора по шести исследовательским документам · ~146 поисковых запросов на пяти языках, 13.08.2026. Прямой доступ к сайтам заблокирован политикой egress организации: постраничного обхода не было, структура конкурентов восстановлена по поисковому индексу. Полные тексты с URL — в репозитории, папка <span class="tag">spain-re/consilium/</span>.</p>
+</div>
