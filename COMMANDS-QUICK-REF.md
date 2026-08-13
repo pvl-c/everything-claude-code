@@ -72,6 +72,17 @@
 
 ---
 
+## Business & Market
+
+| Command | What it does |
+|---------|-------------|
+| `/consilium` | Convene the Berlin Venture Council — 13 experts evaluate a business idea for the German market and return a go/no-go verdict, minimum team, and a two-week test |
+| `/consilium найди ниши` | Niche-hunting mode: regulatory windows, Mittelstand pain, funded verticals, and what is already crowded |
+| `/skill-bet` | Convene the AI Skill Council — 8 experts judge whether an AI skill or side project is worth months of your life: durability against future models, routes to money, sustainability, proof |
+| `/skill-bet --съест` | Durability-only mode: will the next model generation make this skill obsolete or make you faster |
+
+---
+
 ## Session Management
 
 | Command | What it does |
