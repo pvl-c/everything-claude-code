@@ -1,0 +1,355 @@
+<title>Аудитория и каналы</title>
+<style>
+  :root {
+    --paper: #FAFAF7; --ink: #182420; --muted: #5A6A62;
+    --accent: #1F6F54; --accent-soft: #E4EFE9;
+    --warn: #A85B1C; --warn-soft: #F7EBDD;
+    --stop: #9B2C2C; --stop-soft: #F7E4E4;
+    --line: #D9DFD9; --card: #FFFFFF; --code: #EEF2EE;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --paper: #131A17; --ink: #E6ECE8; --muted: #93A29A;
+      --accent: #5FBF9A; --accent-soft: #1C2F28;
+      --warn: #E0985C; --warn-soft: #2E2318;
+      --stop: #E88B8B; --stop-soft: #2E1B1B;
+      --line: #2A3630; --card: #1A2420; --code: #202B26;
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper: #131A17; --ink: #E6ECE8; --muted: #93A29A;
+    --accent: #5FBF9A; --accent-soft: #1C2F28;
+    --warn: #E0985C; --warn-soft: #2E2318;
+    --stop: #E88B8B; --stop-soft: #2E1B1B;
+    --line: #2A3630; --card: #1A2420; --code: #202B26;
+  }
+  body { background: var(--paper); color: var(--ink);
+    font-family: "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+    line-height: 1.55; margin: 0; padding: 0 20px 80px; }
+  .wrap { max-width: 880px; margin: 0 auto; }
+  header.top { padding: 44px 0 8px; border-bottom: 3px solid var(--accent); }
+  .eyebrow { font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--accent); font-weight: 600; margin: 0 0 10px; }
+  h1 { font-family: Georgia, "Times New Roman", serif; font-size: clamp(30px, 5vw, 42px); line-height: 1.12; margin: 0 0 10px; text-wrap: balance; font-weight: 700; }
+  .meta { color: var(--muted); font-size: 14px; margin: 0 0 26px; }
+  h2 { font-family: Georgia, "Times New Roman", serif; font-size: 25px; margin: 48px 0 14px; line-height: 1.2; text-wrap: balance; }
+  h2 .num { color: var(--accent); }
+  h3 { font-size: 17.5px; margin: 30px 0 10px; }
+  p { margin: 0 0 14px; }
+  strong { font-weight: 650; }
+  .verdict { background: var(--accent-soft); border-left: 4px solid var(--accent); padding: 18px 20px; border-radius: 0 8px 8px 0; margin: 26px 0; }
+  .verdict p:last-child, .callout-warn p:last-child, .callout-stop p:last-child, .callout-stop ol:last-child { margin-bottom: 0; }
+  .callout-warn { background: var(--warn-soft); border-left: 4px solid var(--warn); padding: 14px 18px; border-radius: 0 8px 8px 0; margin: 18px 0; }
+  .callout-stop { background: var(--stop-soft); border-left: 4px solid var(--stop); padding: 14px 18px; border-radius: 0 8px 8px 0; margin: 18px 0; }
+  ul, ol { margin: 0 0 16px; padding-left: 22px; }
+  li { margin-bottom: 8px; }
+  li::marker { color: var(--accent); font-weight: 600; }
+  .tablewrap { overflow-x: auto; margin: 0 0 18px; }
+  table { border-collapse: collapse; width: 100%; font-size: 14.5px; min-width: 560px; }
+  th { text-align: left; font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); border-bottom: 2px solid var(--line); padding: 8px 12px 8px 0; }
+  td { border-bottom: 1px solid var(--line); padding: 10px 12px 10px 0; vertical-align: top; }
+  td.n { font-variant-numeric: tabular-nums; white-space: nowrap; }
+  td.pri { font-family: Georgia, serif; font-weight: 700; font-size: 19px; color: var(--accent); text-align: center; }
+  tr.anti td { background: var(--stop-soft); }
+  tr.anti td.pri { color: var(--stop); }
+  .persona { background: var(--card); border: 1px solid var(--line); border-left: 4px solid var(--accent); border-radius: 0 10px 10px 0; padding: 16px 20px; margin: 0 0 12px; }
+  .persona.anti { border-left-color: var(--stop); }
+  .persona h3 { margin: 0 0 6px; font-size: 17px; }
+  .persona .quote { font-style: italic; color: var(--muted); margin: 0 0 10px; }
+  .persona p:last-child { margin-bottom: 0; }
+  details { background: var(--card); border: 1px solid var(--line); border-radius: 10px; margin: 0 0 10px; overflow: hidden; }
+  details[open] { border-color: var(--accent); }
+  summary { cursor: pointer; padding: 13px 16px; font-weight: 600; list-style: none; display: flex; align-items: baseline; gap: 10px; }
+  summary::-webkit-details-marker { display: none; }
+  summary::before { content: "▸"; color: var(--accent); flex: none; transition: transform .15s; }
+  details[open] summary::before { transform: rotate(90deg); }
+  @media (prefers-reduced-motion: reduce) { summary::before { transition: none; } }
+  summary .role { color: var(--muted); font-weight: 400; font-size: 13.5px; }
+  .dbody { padding: 0 18px 16px; border-top: 1px solid var(--line); }
+  .dbody p:first-child, .dbody ul:first-child { margin-top: 14px; }
+  .tag { display: inline-block; font-size: 11.5px; font-weight: 600; letter-spacing: .05em; padding: 1px 8px; border-radius: 99px; background: var(--code); color: var(--muted); white-space: nowrap; }
+  blockquote { margin: 18px 0; padding: 12px 0 12px 20px; border-left: 4px solid var(--accent); font-size: 17px; }
+  blockquote p:last-child { margin-bottom: 0; }
+  .footer-note { color: var(--muted); font-size: 13px; margin-top: 46px; border-top: 1px solid var(--line); padding-top: 14px; }
+  a { color: var(--accent); }
+</style>
+<div class="wrap">
+  <header class="top">
+    <p class="eyebrow">Консилиум Compass Key Realty · Отчёт №5 · 13.08.2026</p>
+    <h1>Аудитория и каналы</h1>
+    <p class="meta">Психологические портреты · триггеры и страхи · партнёрства, контент, реклама, мероприятия · план проверки на 12 месяцев · 7 аналитиков, ~145 запросов на шести языках</p>
+  </header>
+
+  <div class="verdict">
+    <p><strong>Главный сдвиг.</strong> Панель работала «независимо от input», как заказано, — и пришла к другому составу приоритетов. На первое место вышли <strong>француз</strong> (34,8% нерезидентов Каталонии, никем не обслужен в коммерции) и <strong>каталонский продавец</strong> (без него всё остальное бессмысленно). Голландско-бельгийская гипотеза не отвергнута, но опущена на четвёртое место и переведена в режим замера — лендинг за €1 000, а не бюджет на рекламу.</p>
+  </div>
+
+  <h2><span class="num">1.</span> Девять портретов и их приоритет</h2>
+  <div class="tablewrap">
+  <table>
+    <tr><th>Приоритет</th><th>Персона</th><th>Чек</th><th>Почему здесь</th></tr>
+    <tr><td class="pri">1</td><td><strong>Тьерри Аллар, 54</strong><br>француз, Окситания</td><td class="n">€0,4–1,5 млн</td><td>34,8% нерезидентов Каталонии. Сконцентрирован в Ампурдане, франкоязычен, <strong>никем не обслужен в коммерции</strong>, достижим малыми деньгами. Плюс двусторонность: французы сейчас и продают</td></tr>
+    <tr><td class="pri">1</td><td><strong>Жоан Пужоль, 63</strong><br>каталонский владелец кемпинга</td><td class="n">—</td><td>Не покупатель, а <strong>условие существования бизнеса</strong>. Наследники не хотят продолжать. Кто первым получит off-market-поток, тот владеет нишей</td></tr>
+    <tr><td class="pri">2</td><td><strong>Оливье Мартенс, 46</strong><br>действующий оператор FR/BE</td><td class="n">€1,5–6 млн</td><td>Узкая ёмкость, но высокая конверсия. <strong>Экономически самый рентабельный сегмент на сделку</strong></td></tr>
+    <tr><td class="pri">2</td><td><strong>Штефан Райнер, 41</strong><br>иностранец-резидент Барселоны</td><td class="n">€0,5–1,2 млн</td><td><strong>81% иностранных покупателей Каталонии — резиденты.</strong> Самый большой и дешёвый пул, игнорируемый теми, кто целится «на страны»</td></tr>
+    <tr><td class="pri">3</td><td>Дэвид Коэн, 47 · американец</td><td class="n">€0,7–2,5 млн</td><td>Топ-3 по €/м², рост с 620 до 2 199 сделок. Малые объёмы, высокая скорость</td></tr>
+    <tr><td class="pri">3</td><td>Катрин Хофманн, 57 · DE/скандинавия</td><td class="n">€0,8–2 млн+</td><td>Реставрация масии. Чек максимальный, цикл 12–24 мес.</td></tr>
+    <tr><td class="pri">4</td><td>Ханс и Аннеке, 58 · NL/BE</td><td class="n">€0,6–1,5 млн</td><td><strong>Персона гипотетическая по локации.</strong> Спрос реален, но география — Коста-Бланка. Замерить, не инвестировать</td></tr>
+    <tr><td class="pri">5</td><td>Мария Фернанда, 49 · Латам</td><td class="n">€1–5 млн</td><td>Чек высокий, канал закрытый — дорого и медленно</td></tr>
+    <tr class="anti"><td class="pri">✕</td><td><strong>Виктор, 43</strong> — антиперсона</td><td class="n">€0,3–0,4 млн</td><td>«ВНЖ + пассивный доход». Ищет решение, которого нет (golden visa отменена 03.04.2025), торгуется, смотрит 15 стран. Дешёвый трафик, нулевая маржа</td></tr>
+  </table>
+  </div>
+
+  <div class="persona">
+    <h3>Тьерри Аллар, 54 — приоритет 1</h3>
+    <p class="quote">«В Ниме такой дом стоит втрое дороже, а сюда я доезжаю за три часа»</p>
+    <p><strong>Триггер:</strong> французский налог на состояние и налоговая усталость; пустое гнездо. <strong>Ищет на самом деле:</strong> вторую базу в трёх часах езды, где не надо учить новый язык. <strong>Страх:</strong> испанская бюрократия, самострой без легализации, вторая налоговая юрисдикция. <strong>Решает:</strong> супруга — решающий голос, плюс французский нотариус и gestionnaire de patrimoine. <strong>Убедит:</strong> весь документооборот по-французски, сравнение с французским налогом, нерезидентский сценарий. <strong>Оттолкнёт:</strong> английский по умолчанию, риторика «доходность 6%», непрозрачная комиссия.</p>
+  </div>
+
+  <div class="persona">
+    <h3>Жоан Пужоль, 63 — приоритет 1 (сторона предложения)</h3>
+    <p class="quote">«Дети в Барселоне, никто из них сюда не вернётся»</p>
+    <p><strong>Триггер:</strong> возраст, новые требования по паводковому декрету, инвестиции, которые он уже не окупит. <strong>Страх:</strong> продешевить, «продать чужакам», потерять лицо в деревне. <strong>Решает:</strong> gestor, семейный нотариус, сосед-конкурент. <strong>Где:</strong> не в интернете вообще — ayuntamiento, ассоциации, ферии, локальный gestor. <strong>Убедит:</strong> каталанский язык, деликатность, конфиденциальность, отсутствие публичного листинга.</p>
+  </div>
+
+  <div class="persona anti">
+    <h3>Виктор, 43 — не брать</h3>
+    <p class="quote">«Мне нужно ВНЖ и пассивный доход от €400 тысяч»</p>
+    <p>Цикл 18+ месяцев, конверсия единицы процентов, торгуется за каждую комиссию, требует гарантированную доходность в сегменте, где доходность падает. Русскоязычный сегмент обнулился после 2022, нишу держит GG Real Estate. <strong>При двух-четырёх сделках в год неправильный клиент съедает квартал.</strong></p>
+  </div>
+
+  <h2><span class="num">2.</span> Психология: что реально движет покупателем</h2>
+
+  <h3>Семь триггеров, после которых начинается поиск</h3>
+  <p>Продажа бизнеса · смерть родителя и наследство · выход детей из дома · юбилей 55/60/65 · налоговое событие · тревога о собственной стране · выгорание.</p>
+  <p>Практический вопрос для любого материала: <em>что человек делал за пять минут до того, как открыл ваш сайт?</em></p>
+
+  <blockquote><p><strong>Доходность в этом сегменте — чаще язык оправдания, чем цель. Цифры нужны не чтобы убедить покупателя, а чтобы он смог защитить решение перед своим кругом.</strong></p></blockquote>
+
+  <h3>Кто на самом деле решает</h3>
+  <ul>
+    <li><strong>Инициатор</strong> — тот из супругов, у кого был триггер</li>
+    <li><strong>Вето-фигура</strong> — второй супруг; его страх не про деньги, а про одиночество и оторванность от внуков. <strong>Не адресуешь напрямую — сделка тихо умирает</strong></li>
+    <li><strong>Налоговый советник</strong> — не выбирает объект, но выдаёт «разрешение»</li>
+    <li><strong>Взрослые дети</strong> — их вопрос «а что с этим потом делать нам»</li>
+    <li><strong>Друг с опытом</strong> — тот, кто уже купил в Испании</li>
+  </ul>
+
+  <h3>Карта страхов по стадиям</h3>
+  <div class="tablewrap">
+  <table>
+    <tr><th>Стадия</th><th>Доминирующий страх</th><th>Что за ним стоит</th></tr>
+    <tr><td>Мечта</td><td>«Я смешон»</td><td>Осуждение близких</td></tr>
+    <tr><td>Информация</td><td>«Меня разведут как иностранца»</td><td>Незнание процедуры</td></tr>
+    <tr><td>Сравнение</td><td>«Я не вижу подвоха, а он есть»</td><td>Асимметрия информации</td></tr>
+    <tr><td>Перед сделкой</td><td>«А если не пойдёт?»</td><td>Необратимость</td></tr>
+    <tr><td>После</td><td>«Я один в чужой стране»</td><td>Изоляция</td></tr>
+  </table>
+  </div>
+
+  <h3>Два психотипа</h3>
+  <p><strong>«Проект жизни»</strong> (предпенсионер, экс-собственник): реальная цель — новая идентичность, цифры как оправдание, страх «не справлюсь». <strong>«Доходность»</strong> (инвестор): цифры как критерий, страх «не смогу контролировать дистанционно».</p>
+  <div class="callout-warn"><p>Кемпинги, масии и малые отели почти всегда покупает <strong>первый тип, маскирующийся под второй</strong>. Это и шанс, и риск: такие покупатели легче влюбляются и тяжелее переживают операционную реальность.</p></div>
+
+  <blockquote><p><strong>В трансграничной сделке доверие строится не харизмой, а предсказуемостью.</strong> Убивает: искусственная срочность, умолчание о недостатке, скрытый конфликт интересов, доходность без источника. Создаёт: первым назвать плохую новость, письменный ход процесса, рекомендация независимого юриста, отказ от неподходящего объекта.</p></blockquote>
+
+  <h2><span class="num">3.</span> Каналы: приоритет и обоснование порядка</h2>
+  <p>Порядок задан не ожидаемой доходностью, а <strong>скоростью получения интерпретируемого сигнала на единицу денег и времени одного человека</strong>.</p>
+  <div class="tablewrap">
+  <table>
+    <tr><th>№</th><th>Канал</th><th>Почему в этой позиции</th></tr>
+    <tr><td class="pri">1</td><td><strong>Прямой outreach к владельцам</strong><br>(357 кемпингов + масии)</td><td>Единственный канал, где стоимость — время, а не деньги. Один труд даёт три актива: разговоры, реестр «право работать», доказательство компетенции при нулевом трек-рекорде</td></tr>
+    <tr><td class="pri">2</td><td><strong>Со-мандаты и партнёрства</strong></td><td>59% профессиональных фирм называют рефералы главным источником. Но тестируем не «сарафан», а письменные соглашения</td></tr>
+    <tr><td class="pri">3</td><td><strong>Реестр + контент под пустую выдачу</strong></td><td>Buy-side по коммерции Каталонии не занят ни на одном из пяти языков. Лонг-тейл ранжируется за 1–3 месяца</td></tr>
+    <tr><td class="pri">4</td><td><strong>Смоук-тест NL/FR-лендингов</strong></td><td>Гипотеза NL/BE нигде не измерена. Замер стоит €1 000, а не квартал</td></tr>
+    <tr><td class="pri">5</td><td><strong>Закрытые форматы</strong></td><td>Только после шага 1: без 25+ разговоров звать некого</td></tr>
+    <tr><td class="pri">6</td><td><strong>Платная реклама</strong></td><td>Ниша слишком узкая для алгоритмов. Google требует 15 конверсий/30 дней — недостижимо</td></tr>
+    <tr><td class="pri">7</td><td><strong>Выставки со стендом</strong></td><td>Первый стенд = квартальный бюджет всего привлечения. Не в первый год</td></tr>
+  </table>
+  </div>
+
+  <h2><span class="num">4.</span> Партнёрства: конкретные организации</h2>
+
+  <h3>Сторона продавца — начинать здесь</h3>
+  <ul>
+    <li><strong>Federació Catalana de Càmpings</strong> (300+ объектов) · <strong>Associació de Càmpings de Girona</strong> — прямой доступ к собственникам</li>
+    <li><strong>CONCATUR</strong> — 9 ассоциаций сельского туризма, выход на владельцев масий</li>
+    <li><strong>Federació d'Hostaleria i Turisme de les Comarques de Girona</strong>, 11 ассоциаций</li>
+    <li><strong>Reempresa</strong> — официальный каталонский рынок передачи МСБ (Cecot + Fundació Autoocupació, 140+ партнёрских организаций, ~5000 переданных компаний). <strong>Самая неочевидная находка панели</strong></li>
+    <li><strong>Gestor administrativo и asesor fiscal владельца</strong> — узнают о продаже за 12–24 месяца до рынка</li>
+    <li><strong>ASCEF</strong> — Associació Catalana de l'Empresa Familiar, ~150 семейных компаний</li>
+    <li><strong>Colliers и Christie &amp; Co</strong> — не конкуренты, а источник off-market сделок ниже их порога</li>
+  </ul>
+
+  <h3>Сторона покупателя, по национальностям</h3>
+  <ul>
+    <li><strong>Голландцы:</strong> налоговые юристы по эмиграции (Jongbloed, Doorakkers) + <strong>ACSI</strong> (350 инспекторов, ~10 000 кемпингов Европы в год, лично говорят с владельцем)</li>
+    <li><strong>Бельгийцы:</strong> BIV-посредники, юрбюро. Бельгийский нотариус первым слышит «мы продаём здесь и покупаем там»</li>
+    <li><strong>Французы:</strong> CGP — conseillers en gestion de patrimoine, члены CNCGP</li>
+    <li><strong>Немцы:</strong> <strong>AHK Spanien</strong> (~1100 членов, офис в Барселоне)</li>
+    <li><strong>Американцы и Латам:</strong> <strong>AmChamSpain</strong> (270+ компаний). После отмены golden visa иммиграционные юристы стали главным привратником</li>
+    <li><strong>Кросс:</strong> AEDAF (3600+ налоговых советников), AEPSI, AIC / Col·legi API Girona</li>
+  </ul>
+
+  <div class="callout-stop">
+    <p><strong>Правовые ограничения, которые надо закрыть до старта:</strong></p>
+    <ul>
+      <li><strong>AICAT обязателен:</strong> курс 250 ч или профильное образование, помещение, <strong>гарантия €60 000/год на офис</strong>, страхование гражданской ответственности</li>
+      <li><strong>Комиссия испанскому адвокату за реферал — зона риска.</strong> Código Deontológico запрещает адвокату делить гонорар с не-адвокатом. С испанскими юристами и нотариусами — <strong>без денег</strong>, только взаимный поток и совместный контент</li>
+      <li>Реферальное вознаграждение оформляется счётом с IVA 21%; «скидка вместо счёта» незаконна</li>
+    </ul>
+  </div>
+
+  <blockquote><p><strong>Главная валюта в партнёрстве с налоговым советником — не комиссия, а обратный поток.</strong> Каждый ваш голландский покупатель нуждается в декларации на родине.</p></blockquote>
+
+  <h2><span class="num">5.</span> Контент: что писать и где</h2>
+  <blockquote><p>Единица контента — не пост, а <strong>документ, который один человек отправляет другому</strong>. Всё, что нельзя переслать по WhatsApp с подписью «посмотри», для нас не контент.</p></blockquote>
+
+  <h3>Пять флагманских материалов</h3>
+  <ol>
+    <li><strong>«Экономика кемпинга в Каталонии: что вы покупаете за €1–10 млн»</strong> — 8–10 стр. PDF, NL и EN. Тема свободна в выдаче</li>
+    <li><strong>Чек-лист «Право работать дальше»</strong> — 20 пунктов. Публичная версия бесплатно, применённая к объекту — платный P0</li>
+    <li><strong>«Кемпинг, который мы не советовали покупать»</strong> — три разбора отказов с цифрами. Не копируется без репутационной смелости</li>
+    <li><strong>Квартальный отчёт по ценам и доходности</strong> — формат Christie &amp; Co в сегменте €1–10 млн, где институционалов нет</li>
+    <li><strong>«Почему банк не даст вам кредит на кемпинг»</strong> — тема, о которой продающая сторона молчать обязана</li>
+  </ol>
+
+  <h3>Где физически сидят аудитории</h3>
+  <div class="tablewrap">
+  <table>
+    <tr><th>Аудитория</th><th>Площадки</th></tr>
+    <tr><td><strong>NL/BE</strong></td><td>Spanjeforum.nl (с 2002) · Vertreknaarspanje.nl (есть страница «Camping te koop in Spanje») · Nederlanders.fr · Kleine-camping.nl · отраслевые Recreactie, Pretwerk.nl, Leisure360.be</td></tr>
+    <tr><td><strong>FR</strong></td><td>Lepetitjournal.com (Мадрид/Барселона) · Lesfrancais.press · Francaisenespagne.com · L'Officiel des terrains de camping · среда FNHPA</td></tr>
+    <tr><td><strong>DE</strong></td><td>Costa-blanca-forum.de · Auswandererforum.de</td></tr>
+    <tr><td><strong>US/EN</strong></td><td>The Olive Press · Barcelona Metropolitan · Catalonia Today · Spainguru · Expat Exchange · InterNations</td></tr>
+    <tr><td><strong>Отраслевые</strong></td><td>Hosteltur, Nexotur (Испания) · Camping Business, Modern Campground, Hospitality ON (Европа)</td></tr>
+    <tr><td><strong>Локальные</strong></td><td>Diari de Girona · Empordà · premsa.costabrava.org</td></tr>
+  </table>
+  </div>
+
+  <h3>Тональность по национальностям</h3>
+  <ul>
+    <li><strong>NL/BE:</strong> цифры на первом экране, цена услуги открыто, никакого пафоса</li>
+    <li><strong>DE:</strong> метод раньше вывода — процедура, нормативные ссылки, сроки. Немец покупает <strong>порядок</strong></li>
+    <li><strong>FR:</strong> контекст и уважение к сложности. Прямая критика допустима, прямая продажа — нет</li>
+    <li><strong>US:</strong> сначала история и результат, потом метод</li>
+  </ul>
+
+  <p><strong>Ритм для 1–2 человек:</strong> 1 флагман + 1 письмо + 4 поста LinkedIn + 1 видео + 20–30 мин/нед на форумах в месяц; 1 гостевая публикация и 1 вебинар в квартал. <strong>Сезонность: голландцы ищут кемпинг после лета, пик — сентябрь-октябрь.</strong></p>
+  <p><strong>Личный бренд vs компания:</strong> риск и мнение — на личном имени («я посмотрела 40 объектов и отговорила от 31»); обещание и обязательство — на компании.</p>
+
+  <h2><span class="num">6.</span> Мероприятия: календарь и экономика</h2>
+  <div class="callout-warn"><p><strong>Выставки второго жилья — плохой первый канал и хороший третий.</strong> Из 35 000 посетителей ваш сегмент — десятки человек. Реальный рычаг: отраслевые конгрессы кемпингов (там <em>продавцы</em>), собственные закрытые форматы, локальная сеть в Жироне.</p></div>
+
+  <div class="tablewrap">
+  <table>
+    <tr><th>Событие</th><th>Даты</th><th>Оценка</th></tr>
+    <tr><td><strong>Second Home Beurs Den Bosch</strong> (NL)</td><td class="n">18–20.09.2026</td><td>4/10 стенд, <strong>8/10 разведка</strong></td></tr>
+    <tr><td><strong>Congreso de Campings de España</strong> (Байона)</td><td class="n">13–15.10.2026</td><td><strong>9/10 — ехать делегатом</strong></td></tr>
+    <tr><td>Second Home Expo Gent (BE)</td><td class="n">17–18.10.2026</td><td>5/10</td></tr>
+    <tr><td>Barcelona Meeting Point</td><td class="n">17–20.10.2026</td><td>6/10 — нетворкинг без стенда</td></tr>
+    <tr><td><strong>Recreatie Vakbeurs</strong> (Хардерберг, NL)</td><td class="n">17–19.11.2026</td><td><strong>9/10 — владельцы кемпингов Бенилюкса</strong></td></tr>
+    <tr><td><strong>Salon de l'immobilier et de l'expatriation en Espagne</strong> (Париж)</td><td class="n">январь 2027</td><td><strong>8/10 — малый салон, точная аудитория</strong></td></tr>
+    <tr><td><strong>Congrés de Càmpings de Catalunya</strong></td><td class="n">весна 2027</td><td><strong>10/10 — главное событие года</strong></td></tr>
+  </table>
+  </div>
+
+  <div class="tablewrap">
+  <table>
+    <tr><th>Собственный формат</th><th>Люди</th><th>Стоимость</th><th>Что даёт</th></tr>
+    <tr><td>Закрытый ужин</td><td class="n">8–12</td><td class="n">€1 200–2 500</td><td>2–4 реальных разговора. Максимум 20 мин презентации</td></tr>
+    <tr><td>Инвестиционный завтрак</td><td class="n">15–25</td><td class="n">€600–1 200</td><td>Дешевле, приходят предприниматели</td></tr>
+    <tr><td>Вебинар</td><td class="n">40–150 рег.</td><td class="n">€200–800</td><td>Верх воронки, ежеквартально</td></tr>
+    <tr><td><strong>Выездной тур 2 дня</strong></td><td class="n">4–8</td><td class="n">€3 000–6 000</td><td><strong>Самый высокий конверт: 1 сделка на 2–3 тура</strong></td></tr>
+    <tr><td>Клуб владельцев</td><td class="n">15–30/год</td><td class="n">€1 500–3 000</td><td>Рекомендации и повторные сделки</td></tr>
+  </table>
+  </div>
+  <p><strong>Приём:</strong> ужин делается за день до выставки, в том же городе, для 10 отобранных человек. Тогда выставка становится поводом, а не каналом. <strong>Разбивка усилий: 60% до, 10% во время, 30% после.</strong></p>
+
+  <h2><span class="num">7.</span> Платный трафик</h2>
+  <ol>
+    <li><strong>Мало данных.</strong> Google Smart Bidding требует 30 конверсий/30 дней — недостижимо. Только ручные стратегии.</li>
+    <li><strong>Дешёвый лид ≠ хороший лид.</strong> Аудиты Meta: CPL £8 при реальной стоимости квалифицированного разговора £80–120; 40% лидов не помнят, что оставляли форму. <strong>Метрика — стоимость квалифицированного разговора, а не CPL.</strong></li>
+    <li><strong>Долгий цикл.</strong> Реклама не закрывает сделку, она открывает диалог.</li>
+  </ol>
+  <p><strong>Google Search — ядро</strong> (единственный канал с явным намерением). <strong>Отраслевые порталы — лучшее соотношение цена/качество</strong> (camping-te-koop.com, moulin.nl, BusinessesForSale $149/мес, Kyero). <strong>Meta — только видео и ретаргетинг.</strong> <strong>LinkedIn</strong> (CPC ~$6,40 в NL) — только разогрев. <strong>Performance Max и программатик — нет.</strong></p>
+  <div class="callout-stop"><p><strong>Красный флаг:</strong> политика Meta Special Ad Category для жилья, судя по выдаче, уже действует в части Европы и блокирует таргетинг по доходу и возрасту. Проверить в рекламном кабинете <strong>до</strong> планирования Meta-тестов.</p></div>
+  <p><strong>Принцип таргетинга:</strong> география = страна проживания покупателя, а не Испания. <strong>Язык = сигнал №1:</strong> «camping te koop Spanje» — это голландец, где бы он ни находился. Креативы писать носителям — машинный перевод убивает доверие мгновенно.</p>
+  <blockquote><p><strong>Форма квалификации из 6 полей, а не из двух — трение работает на нас. Тот, кто не готов потратить 4 минуты на форму, не потратит 18 месяцев на сделку.</strong></p></blockquote>
+
+  <h2><span class="num">8.</span> План проверки: 12 месяцев с порогами отказа</h2>
+  <p>Правило панели: <strong>ни один канал не запускается без заранее названной цифры, при которой он закрывается.</strong></p>
+  <div class="tablewrap">
+  <table>
+    <tr><th>Мес.</th><th>Действие</th><th>Точка решения</th></tr>
+    <tr><td class="n"><strong>0</strong></td><td>Снять sell-side витрину, EN-версия, опубликовать P0 и модель гонорара</td><td><strong>Гейт: без этого месяц 1 не начинается</strong></td></tr>
+    <tr><td class="n">1–3</td><td>Owner outreach, волна 1 (120 адресов, 3 касания). Реестр 100 объектов</td><td>&lt;8 ответов или &lt;3 разговоров → <strong>сменить носитель</strong> (звонок/визит), не сообщение</td></tr>
+    <tr><td class="n">1–3</td><td>Партнёрства: 25 контактов</td><td>&lt;2 подписанных схем → канал закрыт до появления кейса</td></tr>
+    <tr><td class="n">3</td><td>NL/FR смоук-лендинг, €1 000</td><td>&lt;2% CTA при 300+ визитах → <strong>NL-гипотезу закрыть письменно</strong> до 2027</td></tr>
+    <tr><td class="n">3–6</td><td>6 статей под пустую выдачу</td><td>&lt;3 запроса в топ-20 или 0 заявок P0 → контент как канал закрыт</td></tr>
+    <tr><td class="n"><strong>6</strong></td><td><strong>Ревизия портфеля.</strong> Живыми остаются максимум 2 канала</td><td>&lt;10 разговоров → <strong>проблема не в каналах, а в оффере. Переписать оффер, а не увеличивать бюджет</strong></td></tr>
+    <tr><td class="n">7</td><td>Закрытый ужин, 8–10 гостей</td><td>&lt;6 согласий из 15 → отменить <strong>до</strong> трат</td></tr>
+    <tr><td class="n">7–9</td><td>Owner outreach, волна 2 + первый со-мандат</td><td>0 оплат P0 за 9 мес. → <strong>продукт не существует</strong>, пересобрать цену</td></tr>
+    <tr><td class="n">9–10</td><td>Только при ≥15 разговорах: LinkedIn, €3 000</td><td>&gt;€1 200 за разговор → выключить навсегда</td></tr>
+    <tr><td class="n">10–12</td><td>Квартальный отчёт как повод для второго касания</td><td>&lt;2 подписанных мандата за год → канальная гипотеза не подтверждена</td></tr>
+  </table>
+  </div>
+  <div class="callout-stop">
+    <p><strong>Годовой kill-критерий всего плана:</strong> менее <strong>2 платных мандатов</strong> и менее <strong>25 квалифицированных разговоров</strong> за 12 месяцев при бюджете ≤€12 тыс. → следующий шаг не новый канал, а вход в чужой поток (субподряд у GG/ACSI/юрфирмы).</p>
+  </div>
+  <p><strong>Опережающие индикаторы вместо сделок:</strong> квалифицированные разговоры/мес (цель 4) · покрытие целевого списка (40% из 357 за 6 мес.) · <strong>пересылка материала третьему лицу</strong> · повторный визит на карточку объекта · <strong>оплата P0 — единственный кэш-тест намерения</strong> · глубина вовлечения · возраст сделки.</p>
+
+  <h2><span class="num">9.</span> Red team: пять способов обмануть себя</h2>
+  <ol>
+    <li><strong>Считать лиды вместо разговоров.</strong> 1 000 MQL при 50 SQL — не воронка, а шум</li>
+    <li><strong>Путать интерес с намерением.</strong> Скачал гайд ≠ покупает. Конвертируемые сигналы: оплата P0, proof of funds, приезд на объект</li>
+    <li><strong>Продлевать провальный тест «ещё немного».</strong> Противоядие — kill-критерий, записанный до старта, и внешний свидетель</li>
+    <li><strong>Считать активность реестра прогрессом.</strong> Проверенные 100 объектов при нуле разговоров = провал</li>
+    <li><strong>Объяснять провал канала «плохим креативом».</strong> При n&lt;10 разговоров различить креатив и канал нельзя</li>
+  </ol>
+  <p><strong>Что переоценено:</strong> платная реклама (ниша слишком узкая для алгоритмов) · SEO в горизонте кэша (тяга через 6–9 месяцев, частотность неизвестна) · «рефералы» как канал (при нулевом трек-рекорде рекомендовать нечего) · мероприятия (ужин конвертирует доверие, а не создаёт его).</p>
+  <div class="callout-stop"><p><strong>Русскоязычный одностраничник обнуляет любой канал сверху.</strong> Без EN-версии не запускать ни один тест. <strong>Витрина из 5 объектов ломает outreach</strong> — владелец видит sell-side и закрывается.</p></div>
+
+  <h2><span class="num">10.</span> Что делать на этой неделе</h2>
+  <ol>
+    <li><strong>Снять sell-side витрину</strong> и опубликовать EN-версию с моделью гонорара — это гейт, без него ничего не начинается</li>
+    <li><strong>Вступить в Associació de Càmpings de Girona</strong> и подать заявку в Cambra de Comerç de Girona — стоит почти ноль, даёт больше всего</li>
+    <li><strong>Проверить статус AICAT</strong> (гарантия €60 000/год + страховка) — без него партнёрства обсуждать бессмысленно</li>
+    <li><strong>Зарегистрироваться в Reempresa</strong> как покупательский канал</li>
+    <li><strong>Составить список 120 адресов</strong> для первой волны outreach из 357 кемпингов и масий</li>
+    <li><strong>Проверить Meta Special Ad Category</strong> в рекламном кабинете</li>
+    <li><strong>Забронировать участие делегатом</strong> в Congreso de Campings de España (Байона, 13–15.10.2026)</li>
+  </ol>
+
+  <h2><span class="num">11.</span> Отчёты аналитиков</h2>
+  <p class="meta">Дайджесты; полные тексты с источниками — в <span class="tag">consilium/work/2026-08-13-audience-channels/</span></p>
+
+  <details><summary>A1 · Даниэла Рос <span class="role">— психология решения</span></summary><div class="dbody">
+    <p>Семь триггерных событий, карта страхов по стадиям, контур принятия решения (инициатор → вето-фигура → советник → дети → друг с опытом), пять стадий готовности и что нужно на каждой, два психотипа. Отдельно отбраковала две гуляющие по интернету цифры как недостоверные и указала это прямо.</p>
+  </div></details>
+
+  <details><summary>A2 · Юсуф Карим <span class="role">— портреты аудиторий</span></summary><div class="dbody">
+    <p>Девять портретов по сценариям жизни с ёмкостью и достижимостью каждого. Главная перестановка: француз и каталонский продавец на первое место, голландская пара — на четвёртое с пометкой «персона гипотетическая по локации». Пять антисегментов, включая британского пенсионера до €300 тыс. и институциональные фонды.</p>
+  </div></details>
+
+  <details><summary>A3 · Марта Гжегож <span class="role">— платный трафик</span></summary><div class="dbody">
+    <p>Разбор восьми платформ, ориентиры CPC/CPM по странам с честной пометкой, что почти вся публичная статистика — рынок США и массовое жильё. Пять тестовых гипотез с бюджетами и порогами (~€3 200 на 12 недель), форма квалификации из 6 полей, десять способов слить бюджет. Красный флаг по Meta Special Ad Category.</p>
+  </div></details>
+
+  <details><summary>A4 · Хелена Фьорд <span class="role">— контент и органика</span></summary><div class="dbody">
+    <p>Принцип «контент, который пересылают, а не лайкают». Форматы по стадиям готовности, конкретные площадки на пяти языках, тональность по национальностям через рамку Эрин Мейер, пять флагманских материалов, реалистичный ритм для 1–2 человек и метрики при редких сделках с пороговым тестом на 12 месяцев.</p>
+  </div></details>
+
+  <details><summary>A5 · Ким Дэвис <span class="role">— рефералы и партнёрства</span></summary><div class="dbody">
+    <p>Карта партнёров по обеим сторонам сделки с названиями организаций. Находка панели — <strong>Reempresa</strong>, официальный каталонский рынок передачи МСБ. Мотивация каждого типа партнёра, правовые рамки (AICAT, запрет комиссий испанским адвокатам, IVA), план первых 90 дней и метрики реферального канала.</p>
+  </div></details>
+
+  <details><summary>A6 · Роберт Хаас <span class="role">— мероприятия и офлайн</span></summary><div class="dbody">
+    <p>Календарь из 15 событий с подтверждёнными датами и оценкой по 10-балльной шкале. Экономика выставки (60% до, 10% во время, 30% после), пять собственных форматов с ценами, локальный офлайн в Каталонии как источник эксклюзивов, разные форматы для интроверта-предпенсионера и предпринимателя.</p>
+  </div></details>
+
+  <details><summary>A7 · Оскар Лунд <span class="role">— эксперименты и red team</span></summary><div class="dbody">
+    <p>Почему обычная маркетинговая логика не работает при n≈0. Приоритет каналов по скорости сигнала, восемь тестов с порогами отказа, опережающие индикаторы вместо сделок, пять способов самообмана, годовой kill-критерий всего плана и календарь на 12 месяцев с точками решения.</p>
+  </div></details>
+
+  <p class="footer-note">Отчёт консилиума Compass Key Realty №5 · синтез координатора по семи исследовательским документам · ~145 поисковых запросов на шести языках, 13.08.2026. Прямой доступ к сайтам заблокирован политикой egress организации — всё восстановлено по поисковому индексу; разметка достоверности сохранена в каждом исходном документе. Полные тексты — в репозитории, папка <span class="tag">spain-re/consilium/</span>.</p>
+</div>
