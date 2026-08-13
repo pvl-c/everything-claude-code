@@ -1,0 +1,341 @@
+<title>Срез рынка Каталонии</title>
+<style>
+  :root {
+    --paper: #FAFAF7; --ink: #182420; --muted: #5A6A62;
+    --accent: #1F6F54; --accent-soft: #E4EFE9;
+    --warn: #A85B1C; --warn-soft: #F7EBDD;
+    --stop: #9B2C2C; --stop-soft: #F7E4E4;
+    --up: #1F6F54; --down: #9B2C2C;
+    --line: #D9DFD9; --card: #FFFFFF; --code: #EEF2EE;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --paper: #131A17; --ink: #E6ECE8; --muted: #93A29A;
+      --accent: #5FBF9A; --accent-soft: #1C2F28;
+      --warn: #E0985C; --warn-soft: #2E2318;
+      --stop: #E88B8B; --stop-soft: #2E1B1B;
+      --up: #5FBF9A; --down: #E88B8B;
+      --line: #2A3630; --card: #1A2420; --code: #202B26;
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper: #131A17; --ink: #E6ECE8; --muted: #93A29A;
+    --accent: #5FBF9A; --accent-soft: #1C2F28;
+    --warn: #E0985C; --warn-soft: #2E2318;
+    --stop: #E88B8B; --stop-soft: #2E1B1B;
+    --up: #5FBF9A; --down: #E88B8B;
+    --line: #2A3630; --card: #1A2420; --code: #202B26;
+  }
+  body { background: var(--paper); color: var(--ink);
+    font-family: "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+    line-height: 1.55; margin: 0; padding: 0 20px 80px; }
+  .wrap { max-width: 860px; margin: 0 auto; }
+  header.top { padding: 44px 0 8px; border-bottom: 3px solid var(--accent); }
+  .eyebrow { font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--accent); font-weight: 600; margin: 0 0 10px; }
+  h1 { font-family: Georgia, "Times New Roman", serif; font-size: clamp(30px, 5vw, 42px); line-height: 1.12; margin: 0 0 10px; text-wrap: balance; font-weight: 700; }
+  .meta { color: var(--muted); font-size: 14px; margin: 0 0 26px; }
+  h2 { font-family: Georgia, "Times New Roman", serif; font-size: 25px; margin: 48px 0 14px; line-height: 1.2; text-wrap: balance; }
+  h2 .num { color: var(--accent); }
+  h3 { font-size: 17.5px; margin: 30px 0 10px; }
+  p { margin: 0 0 14px; }
+  .lead { font-size: 17.5px; }
+  strong { font-weight: 650; }
+  .verdict { background: var(--accent-soft); border-left: 4px solid var(--accent); padding: 18px 20px; border-radius: 0 8px 8px 0; margin: 26px 0; }
+  .verdict p:last-child, .callout-warn p:last-child, .callout-stop p:last-child { margin-bottom: 0; }
+  .callout-warn { background: var(--warn-soft); border-left: 4px solid var(--warn); padding: 14px 18px; border-radius: 0 8px 8px 0; margin: 18px 0; }
+  .callout-stop { background: var(--stop-soft); border-left: 4px solid var(--stop); padding: 14px 18px; border-radius: 0 8px 8px 0; margin: 18px 0; }
+  ul, ol { margin: 0 0 16px; padding-left: 22px; }
+  li { margin-bottom: 8px; }
+  li::marker { color: var(--accent); font-weight: 600; }
+  .tablewrap { overflow-x: auto; margin: 0 0 18px; }
+  table { border-collapse: collapse; width: 100%; font-size: 14.5px; min-width: 540px; }
+  th { text-align: left; font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); border-bottom: 2px solid var(--line); padding: 8px 12px 8px 0; }
+  td { border-bottom: 1px solid var(--line); padding: 10px 12px 10px 0; vertical-align: top; }
+  td.n, .tnum { font-variant-numeric: tabular-nums; white-space: nowrap; }
+  tr.total td { font-weight: 700; border-bottom: 2px solid var(--accent); }
+  .up { color: var(--up); font-weight: 700; }
+  .down { color: var(--down); font-weight: 700; }
+  .badge { display: inline-block; font-size: 10.5px; font-weight: 700; letter-spacing: .04em; padding: 1px 7px; border-radius: 99px; vertical-align: middle; white-space: nowrap; }
+  .b-ok { background: var(--accent-soft); color: var(--accent); }
+  .b-chk { background: var(--warn-soft); color: var(--warn); }
+  .b-no { background: var(--code); color: var(--muted); }
+  .finding { background: var(--card); border: 1px solid var(--line); border-left: 4px solid var(--accent); border-radius: 0 10px 10px 0; padding: 16px 20px; margin: 0 0 14px; }
+  .finding.alert { border-left-color: var(--stop); }
+  .finding.watch { border-left-color: var(--warn); }
+  .finding h3 { margin: 0 0 8px; font-size: 17px; }
+  .finding h3 .fn { color: var(--accent); font-family: Georgia, serif; font-size: 20px; margin-right: 6px; }
+  .finding.alert h3 .fn { color: var(--stop); }
+  .finding.watch h3 .fn { color: var(--warn); }
+  .finding p:last-child, .finding ul:last-child { margin-bottom: 0; }
+  details { background: var(--card); border: 1px solid var(--line); border-radius: 10px; margin: 0 0 10px; overflow: hidden; }
+  details[open] { border-color: var(--accent); }
+  summary { cursor: pointer; padding: 13px 16px; font-weight: 600; list-style: none; display: flex; align-items: baseline; gap: 10px; }
+  summary::-webkit-details-marker { display: none; }
+  summary::before { content: "▸"; color: var(--accent); flex: none; transition: transform .15s; }
+  details[open] summary::before { transform: rotate(90deg); }
+  @media (prefers-reduced-motion: reduce) { summary::before { transition: none; } }
+  summary .role { color: var(--muted); font-weight: 400; font-size: 13.5px; }
+  .dbody { padding: 0 18px 16px; border-top: 1px solid var(--line); }
+  .dbody p:first-child, .dbody ul:first-child { margin-top: 14px; }
+  .tag { display: inline-block; font-size: 11.5px; font-weight: 600; letter-spacing: .05em; padding: 1px 8px; border-radius: 99px; background: var(--code); color: var(--muted); white-space: nowrap; }
+  blockquote { margin: 16px 0; padding: 2px 0 2px 18px; border-left: 3px solid var(--line); color: var(--muted); font-style: italic; }
+  .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 12px; margin: 0 0 20px; }
+  .kpi { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; }
+  .kpi .v { font-family: Georgia, serif; font-size: 26px; font-weight: 700; line-height: 1.1; font-variant-numeric: tabular-nums; }
+  .kpi .l { font-size: 12.5px; color: var(--muted); margin-top: 5px; line-height: 1.35; }
+  .footer-note { color: var(--muted); font-size: 13px; margin-top: 46px; border-top: 1px solid var(--line); padding-top: 14px; }
+  a { color: var(--accent); }
+</style>
+<div class="wrap">
+  <header class="top">
+    <p class="eyebrow">Консилиум Compass Key Realty · Отчёт №3 · 13.08.2026</p>
+    <h1>Срез рынка Каталонии</h1>
+    <p class="meta">Тренды · целевые аудитории · статистика · политика · конкуренты · смежные рынки · 9 аналитиков, ~150 поисковых запросов на пяти языках</p>
+  </header>
+
+  <div class="callout-warn">
+    <p><strong>О качестве данных.</strong> Прямой доступ к сайтам из рабочего окружения заблокирован — первичные PDF (Colliers, CBRE, INE, Registradores) не открывались, цифры взяты из результатов поиска и публичных пересказов. Разметка: <span class="badge b-ok">подтверждено</span> источник и дата известны · <span class="badge b-chk">проверить</span> источник вторичный или единичный · <span class="badge b-no">нет данных</span>. Перед внешним использованием ключевую цифру брать из первоисточника.</p>
+  </div>
+
+  <h2><span class="num">1.</span> Семь выводов, которые меняют стратегию</h2>
+
+  <div class="finding alert">
+    <h3><span class="fn">1</span>Главная гипотеза компании данными не подтверждена</h3>
+    <p>NL/BE-спрос на испанскую недвижимость реален и силён: голландцы в 2025 впервые стали первой нацией среди нерезидентов — 6 289 объектов против немцев 6 233 и британцев 6 152 <span class="badge b-ok">подтверждено</span>. <strong>Но его география — не Каталония:</strong> ядро — Коста-Бланка (Хавея ~70% сделок, Дения ~40%). Голландская традиция владения кемпингами за рубежом — франкоцентрична.</p>
+    <p><strong>Пересечения «NL/BE × кемпинг × горная Каталония» в данных нет вообще</strong> <span class="badge b-no">нет данных</span>. Это не приговор сегменту — он просто нигде не измерен. Замер возможен только собственной первичкой.</p>
+  </div>
+
+  <div class="finding">
+    <h3><span class="fn">2</span>Ниша buy-side €1–10 млн действительно свободна</h3>
+    <div class="tablewrap"><table>
+      <tr><th>Сегмент</th><th>Кто занимает</th><th>Статус</th></tr>
+      <tr><td>Выше €10–20 млн</td><td>Colliers, CBRE, Christie &amp; Co, Savills, JLL</td><td>Плотно занято</td></tr>
+      <tr><td><strong>€1–10 млн, коммерция, buy-side</strong></td><td><strong>Почти никого</strong></td><td class="up">Свободно</td></tr>
+      <tr><td>Ниже €0,5 млн</td><td>Traspaso-брокеры, Bizalia, Milanuncios</td><td>Плотно занято</td></tr>
+    </table></div>
+    <p>Подтверждение с другой стороны: <strong>институциональной статистики по сегменту €1–5 млн в Испании не существует</strong> — отели 10–60 номеров и casas rurales не попадают в выборки консультантов. Информационная асимметрия — реальный актив.</p>
+  </div>
+
+  <div class="finding alert">
+    <h3><span class="fn">3</span>Появились два конкретных конкурента, которых раньше не было</h3>
+    <p><strong>ACSI Broker Services</strong> — голландский кемпинговый бренд (60+ лет) запустил пан-европейскую M&amp;A-платформу с публичными и <strong>off-market</strong> объектами; отдельный брокер закреплён за Южной Европой <span class="badge b-ok">подтверждено</span>. Прямой заход в нишу «голландец покупает кемпинг в Испании».</p>
+    <p><strong>GG Real Estate Barcelona</strong> — русскоязычное агентство, уже делающее отельный <strong>buy-side</strong> с закрытой базой, underwriting, проверкой лицензий и asset management <span class="badge b-ok">подтверждено</span>. Ровно целевая позиция компании.</p>
+    <p>При этом <strong>buy-side по кемпингам в Каталонии не представляет никто:</strong> Concerto и ACSI держат мандаты продавцов.</p>
+  </div>
+
+  <div class="finding">
+    <h3><span class="fn">4</span>Регуляторный вектор подтверждает уход из жилья в коммерцию</h3>
+    <div class="tablewrap"><table>
+      <tr><th>Жильё — под давлением</th><th>Коммерция — вне контура</th></tr>
+      <tr><td>271 муниципалитет в «напряжённых зонах», ~90% населения</td><td>Вне жилищного законодательства</td></tr>
+      <tr><td>Ley 11/2025 закрыла обход через сезонную аренду</td><td>Мораторий на лицензии → <strong>лицензия становится главным элементом цены</strong></td></tr>
+      <tr><td>ITP <strong>20%</strong> для grandes tenedores</td><td>Барселона — <strong>№1 в Европе</strong> по интересу гостиничных инвесторов (CBRE 2026)</td></tr>
+      <tr><td>Барселона обнуляет ~10 000 лицензий HUT к 2028</td><td>Инвестиции в отели: €4 275 млн (2025), €2 460 млн за 1П2026 <span class="up">+26,5%</span></td></tr>
+      <tr><td>Доходность аренды в Барселоне <span class="down">6,8% → 5,9%</span> за год</td><td>Каталония 2025: €934 млн в отели, <span class="up">+51%</span></td></tr>
+    </table></div>
+    <p><strong>Продавать иностранцу жилую аренду как доходный продукт больше нельзя:</strong> цены растут, доходность падает. Логика сделки — capital gains + lifestyle, не yield.</p>
+  </div>
+
+  <div class="finding alert">
+    <h3><span class="fn">5</span>Новый риск, специфичный именно для целевого актива</h3>
+    <p><strong>Из 357 зарегистрированных кемпингов Каталонии 179 пересечены водотоком или имеют его ближе 100 метров</strong> <span class="badge b-ok">подтверждено</span>. Decret llei 4/2025 → отменён → заменён <strong>Decret llei 17/2025</strong>, утверждён Парламентом 01.10.2025: комиссии, независимые эксперты, проверка жизнеспособности.</p>
+    <p>Это не про страховку — <strong>это про право объекта продолжать работу.</strong> Горные кемпинги у рек — именно эта категория. Плюс RD 638/2016 запрещает кемпинги в <em>zona de flujo preferente</em> без переходного режима.</p>
+  </div>
+
+  <div class="finding watch">
+    <h3><span class="fn">6</span>«Климатическое бегство в горы» данными не подтверждается</h3>
+    <ul>
+      <li>Пиренеи Жироны 2025: <strong>+1,4%</strong> ночёвок против Costa Brava <strong>+0,2%</strong> — в пределах шума</li>
+      <li>Весь «coolcation»-массив — метрики поисковых <em>намерений</em>, направленные <strong>из</strong> Средиземноморья <strong>в</strong> Скандинавию (Норвегия +33%) — то есть скорее угроза Каталонии</li>
+      <li>97% иностранных визитов по-прежнему в шести автономиях</li>
+      <li>Единственный сильный сигнал — II кв. 2026: сельский сегмент <span class="up">+4,2%</span> ночёвок против кемпингов <span class="down">−2,7%</span>. Но кемпинги Каталонии на ~73% приморские — расхождение частично географическое</li>
+    </ul>
+    <p><strong>Не закладывать климатическую премию в цену покупки.</strong></p>
+  </div>
+
+  <div class="finding watch">
+    <h3><span class="fn">7</span>Сельский туризм растёт ценой, а не загрузкой</h3>
+    <p>Испания 2025: 12,88 млн ночёвок (+1,2%) при <strong>средней годовой загрузке 21,6%</strong> и росте цен <strong>+8,9%</strong>; иностранные постояльцы −3,2% <span class="badge b-ok">подтверждено</span>. Кемпинги Каталонии — годовая заполняемость <strong>40,1%</strong> при пиках 85–100%.</p>
+    <p><strong>Вся годовая выручка делается за 8–10 недель</strong>, реально оплачиваемый горный сезон — 4–5 месяцев. Покупателю предпенсионного возраста это должно быть видно в первом же документе: это операционный бизнес с высокой личной нагрузкой, а не пассивный доход.</p>
+  </div>
+
+  <h2><span class="num">2.</span> Целевые аудитории: кто приходит, кто уходит</h2>
+  <div class="callout-warn"><p><strong>Метрическая ловушка:</strong> Registradores и Notariado считают разное (доля от всех зарегистрированных сделок vs от нотариальных актов по свободному жилью), разрыв ~5 п.п. Не смешивать.</p></div>
+
+  <div class="tablewrap">
+  <table>
+    <tr><th>Нация</th><th>2025</th><th>I кв. 2026</th><th>Тренд</th><th>Что это значит</th></tr>
+    <tr><td>🇬🇧 Великобритания</td><td class="n">7,93%</td><td class="n">6,82%</td><td class="down">↓↓ с 21,91% в 2016</td><td>Эпоха закончилась; всё ещё №1, но с отрывом в доли процента</td></tr>
+    <tr><td>🇳🇱 Нидерланды</td><td class="n">6,77%</td><td class="n">6,56%</td><td class="up">↑↑ +12,2% за год</td><td><strong>Новые короли нерезидентов</strong>, но география — Коста-Бланка</td></tr>
+    <tr><td>🇩🇪 Германия</td><td class="n">6,65%</td><td class="n">6,09%</td><td class="down">↓ −2,6%</td><td>Стабильно высокий чек — 3 559 €/м²</td></tr>
+    <tr><td>🇲🇦 Марокко</td><td class="n">5,78%</td><td class="n">6,21%</td><td class="up">↑↑ +20,2%</td><td>Резидентский спрос, первичное жильё — не целевой сегмент</td></tr>
+    <tr><td>🇷🇴 Румыния</td><td class="n">5,45%</td><td class="n">—</td><td class="up">↑ +24%</td><td>То же</td></tr>
+    <tr><td>🇮🇹 Италия</td><td class="n">5,32%</td><td class="n">5,54%</td><td class="up">↑ 3-е среди нерезидентов</td><td>—</td></tr>
+    <tr><td>🇫🇷 Франция</td><td class="n">4,93%</td><td class="n">—</td><td>→ стабильно</td><td><strong>34,8% нерезидентов в Каталонии</strong> — доминируют</td></tr>
+    <tr><td>🇧🇪 Бельгия</td><td class="n">4,38%</td><td class="n">—</td><td class="down">↓ −17,6%</td><td>Как основная цель — рискованно</td></tr>
+    <tr><td>🇺🇸 США</td><td class="n">~2%</td><td class="n">—</td><td class="up">↑ 620 → 2 199 сделок</td><td>Топ-3 по цене, 13% покупок в Барселоне</td></tr>
+    <tr><td>🇷🇺 Россия</td><td class="n">~0</td><td class="n">—</td><td class="down">↓↓↓ выбыли</td><td>Списать</td></tr>
+    <tr><td>🇨🇳 Китай</td><td class="n">—</td><td class="n">—</td><td>↔ уходят</td><td>Переориентация на Грецию и Португалию</td></tr>
+  </table>
+  </div>
+
+  <h3>Кто платит больше всех, €/м² <span class="badge b-chk">проверить</span></h3>
+  <p>Швеция <strong>3 654</strong> · Германия <strong>3 559</strong> · <strong>США 3 501</strong> · Норвегия 3 085 · все нерезиденты 3 126 · иностранцы-резиденты 1 912.</p>
+  <div class="callout-stop"><p><strong>Голландцев и бельгийцев в топе по цене нет.</strong> Их сила в объёме, а не в чеке — прямое противоречие с целью «€500 тыс.+».</p></div>
+
+  <h3>Каталония: своя структура</h3>
+  <ul>
+    <li>Доля иностранцев — <strong>15%</strong> сделок. По провинциям: <strong>Жирона 27,1%</strong>, Таррагона 15,9%, Барселона 14,2%</li>
+    <li><strong>81% иностранных покупателей в Каталонии — резиденты</strong>, только 19% нерезиденты <span class="badge b-chk">проверить</span>. Ключевое отличие от Аликанте и Балеар</li>
+    <li>Среди нерезидентов доминируют <strong>французы — 34,8%</strong>. В Жироне: французы ~36%, немцы и голландцы по ~13%</li>
+    <li>Тревожный сигнал: французы и итальянцы в Каталонии в 2026 продают больше, чем покупают <span class="badge b-chk">проверить</span></li>
+  </ul>
+
+  <div class="verdict">
+    <p><strong>Вывод по аудиториям.</strong> Если цель — премиум в Каталонии, естественные кандидаты не совпадают с текущей ставкой: <strong>французы</strong> (доминируют среди нерезидентов), <strong>американцы</strong> (топ-3 по цене, растут), <strong>латиноамериканцы</strong> (ядро люкса), <strong>немцы и скандинавы</strong> (высокий чек). Голландцы и бельгийцы — сильный объёмный поток, но на чужой для Каталонии территории и в среднем ценовом сегменте.</p>
+  </div>
+
+  <h2><span class="num">3.</span> Ключевые цифры рынка</h2>
+
+  <h3>Жильё</h3>
+  <div class="kpi-grid">
+    <div class="kpi"><div class="v">714 237</div><div class="l">сделок в Испании в 2025, +11,5% — максимум за 18 лет</div></div>
+    <div class="kpi"><div class="v">+12,9%</div><div class="l">цены г/г, I кв. 2026; Каталония +10,5%</div></div>
+    <div class="kpi"><div class="v">750 000</div><div class="l">дефицит жилищ, накоплен за 2021–2025</div></div>
+    <div class="kpi"><div class="v">17%</div><div class="l">доля Каталонии в национальном предложении €1 млн+</div></div>
+  </div>
+  <ul>
+    <li>Барселона: <strong>5 449 €/м²</strong> (запрашиваемая, idealista) против <strong>4 676 €/м²</strong> (Gloval, оценочная) при <strong>падении числа сделок −10,8%</strong> — цена растёт на сжимающемся обороте <span class="badge b-chk">проверить</span></li>
+    <li>Средняя люксовая сделка Коста-Бравы <strong>~€870 тыс.</strong> → <strong>порог €500 тыс. рабочий, €1 млн — витринный</strong></li>
+  </ul>
+
+  <h3>Коммерция и отели</h3>
+  <div class="kpi-grid">
+    <div class="kpi"><div class="v">€4 275 млн</div><div class="l">инвестиции в отели Испании, 2025 (194 сделки)</div></div>
+    <div class="kpi"><div class="v">+26,5%</div><div class="l">1П2026 — €2 460 млн, рекорд полугодия</div></div>
+    <div class="kpi"><div class="v">€213 тыс.</div><div class="l">цена за ключ — <strong>но это 4–5★</strong>, не переносится на отель за €1,5 млн</div></div>
+    <div class="kpi"><div class="v">5,0%</div><div class="l">prime-доходность Мадрид/Барселона; острова 6,0%</div></div>
+  </div>
+  <ul>
+    <li>Национальный капитал — <strong>72% сделок</strong>; частные инвесторы — 17% объёма</li>
+    <li>Барселона 1П2026: всего <strong>€165 млн</strong> против €577 млн на Балеарах — <strong>капитал уходит из города</strong></li>
+    <li>Мультипликаторы малого сегмента: EBITDA <strong>6–9x</strong>, городские 3–4★ 8–12x <span class="badge b-chk">проверить</span></li>
+  </ul>
+
+  <h3>Кемпинги</h3>
+  <div class="kpi-grid">
+    <div class="kpi"><div class="v">21,1 млн</div><div class="l">ночёвок в Каталонии — 38–42% всего испанского кемпинг-спроса</div></div>
+    <div class="kpi"><div class="v">357</div><div class="l">зарегистрированных кемпингов в Каталонии</div></div>
+    <div class="kpi"><div class="v">40,1%</div><div class="l">годовая заполняемость при пиках 85–100%</div></div>
+    <div class="kpi"><div class="v">~10%</div><div class="l">кемпингов Испании уже у фондов и сетей</div></div>
+  </div>
+  <ul>
+    <li>II кв. 2026 — разворот: ночёвки <span class="down">−2,7%</span>, внутренний спрос <span class="down">−8,9%</span>, иностранцы <span class="up">+5,8%</span></li>
+    <li>Консолидация: <strong>ECG/PAI Partners</strong> (купили Alannia, июль 2025), <strong>Meridia/wecamp</strong> (16 объектов, фонд ~250 млн €), <strong>HolaCamp/Indotek</strong> (СП ~100 млн €)</li>
+    <li><strong>Что фонды не покупают:</strong> малые горные кемпинги 50–150 мест без масштаба и бренда — это и есть ниша, но ниша по остаточному принципу</li>
+  </ul>
+
+  <h3>Туризм и макро</h3>
+  <ul>
+    <li>Испания 2025: <strong>96,8 млн туристов</strong> (+3,2%), расходы <strong>134,7 млрд €</strong> (+6,8%)</li>
+    <li>Каталония 2025: впервые <strong>&gt;20 млн</strong> иностранных туристов, расходы 24,8 млрд € (+4,4%) — <strong>деньги растут в 7 раз быстрее потока</strong></li>
+    <li>Нидерланды в Каталонии <span class="up">+7,6%</span>, вошли в тройку рынков; Франция −0,3%, Британия −1,5%, США −5,3%</li>
+    <li><strong>ЕЦБ развернулся:</strong> +25 б.п. в июне 2026, ставка 2,25% — первое повышение с сентября 2023. Euribor ≈2,96% против 2,11% годом ранее</li>
+    <li><strong>Финансирование в целевом сегменте — не драйвер:</strong> иностранцы берут ипотеку в 34% случаев против 78% у испанцев</li>
+  </ul>
+
+  <h2><span class="num">4.</span> Политика: что изменилось</h2>
+  <ol>
+    <li><strong>«100% налог для не-ЕС покупателей» не принят и не обсуждался</strong> с мая 2025 — у правительства нет большинства. Риск для американских и латиноамериканских клиентов сегодня <strong>репутационно-информационный, а не фискальный</strong>: покупатели читают заголовки.</li>
+    <li><strong>Golden visa отменена 03.04.2025</strong> без обратной силы. Осталось: digital nomad (27 875 разрешений), <strong>non-lucrative (€28 800/год — ровно профиль предпенсионера)</strong>, entrepreneur.</li>
+    <li><strong>Мадрид парализован:</strong> Junts ветирует законы с ноября 2025, досрочные выборы вероятны. Любая общеиспанская инициатива против иностранных покупателей в этой легислатуре нереализуема.</li>
+    <li><strong>Каталония, наоборот, регулирует активно:</strong> бюджет 2026 принят, 1,9 млрд € на жильё, готовится закон против спекулятивной покупки в 271 муниципалитете.</li>
+    <li><strong>Туристический налог вырос с 01.04.2026:</strong> Барселона до 9,50 €/ночь, сборы со 101 до 200 млн €/год. <strong>С 01.10.2026 все муниципалитеты Каталонии могут вводить надбавку до 4 €/ночь</strong> — касается и горных активов.</li>
+    <li><strong>Голландцы и бельгийцы — граждане ЕС.</strong> Ни отмена golden visa, ни «налог для не-ЕС» их не касаются. Не продавать им визовое решение — оно им не нужно.</li>
+  </ol>
+
+  <h2><span class="num">5.</span> Климат и риски</h2>
+  <p>Картина инвертирована по сравнению с ожиданиями:</p>
+  <ul>
+    <li><strong>Вода перестала быть острым риском:</strong> водохранилища Каталонии <strong>94,68% в июне 2026</strong>, режим нормальности. Но юридический прецедент 2024 никуда не делся: в аварийном режиме <strong>запрещено наполнение бассейнов</strong>, включая кемпинговые. Актив с собственной легализованной скважиной переживает засуху, актив на муниципальной сети теряет сезон.</li>
+    <li><strong>Пожар — риск №1 по деньгам:</strong> Испания 2026 к 11 августа — <strong>226 391 га, +38,2%</strong> к 2025. Ущерб 2025 ~5 млрд €, застраховано <strong>менее 1 млрд €</strong>. Llei 5/2003 требует <strong>защитную полосу 25 метров</strong> вокруг изолированных зданий.</li>
+    <li><strong>Наводнение — риск №1 по ликвидности</strong> (см. вывод 5).</li>
+    <li><strong>Отказ банка приходит через страховщика, а не напрямую.</strong> Проверять страхуемость нужно <em>до</em> торга по цене.</li>
+  </ul>
+  <div class="callout-warn">
+    <p><strong>Чек-лист до сделки:</strong> статус в реестре кемпингов зоны риска · zona de flujo preferente по картам ACA · franja perimetral 25 м · источник воды (сеть / скважина &lt;7 000 м³ / концессия ACA) · возможность наполнения бассейна в режиме emergencia · действующий полис с оплаченной премией (иначе CCS не работает) · энергосертификат против порогов EPBD 2030/2033 · фибра и зависимость подъезда от N-260 · муниципальный план ЧС по затоплению.</p>
+  </div>
+
+  <h2><span class="num">6.</span> Смежные рынки</h2>
+  <ul>
+    <li><strong>Испания проигрывает гонку за «глобального миллионера»:</strong> ОАЭ +9 800, Британия −16 500 (2025). Португалия отменила NHR, Италия даёт флэт-налог, Греция — 7% для пенсионеров на 15 лет.</li>
+    <li><strong>Зато выигрывает в другом:</strong> покупателю второго дома резидентство часто просто не нужно. <strong>Нерезидентский сценарий — самый сильный аргумент</strong>: не платит Patrimonio на мировые активы, не подаёт Modelo 720.</li>
+    <li><strong>Каталония — не Мадрид:</strong> нет 100%-ной скидки по Patrimonio (порог €500 тыс., ставки 0,21–3,48%). Проговаривать <em>до</em> покупки.</li>
+    <li><strong>Смежная маржа — в школах, медицине и налоговом сопровождении</strong>, не в самой релокации: 400+ международных школ (€6–25 тыс./год), 12,4 млн частных медполисов.</li>
+    <li>Решения Верховного суда осени 2025 распространили правило 60%-ного ограничения на нерезидентов — <strong>основание для аудита переплат у уже купивших клиентов</strong>.</li>
+  </ul>
+
+  <h2><span class="num">7.</span> Семь следствий для стратегии</h2>
+  <ol>
+    <li><strong>Не отказываться от NL/BE-гипотезы, но перестать считать её фактом.</strong> Замер собственной первичкой — единственный путь. Параллельно держать в поле зрения французов, американцев и немцев: они в Каталонии и платят больше.</li>
+    <li><strong>Занять buy-side по кемпингам раньше, чем это сделает ACSI.</strong> Ниша со стороны покупателя пуста, но голландский бренд уже заходит в Южную Европу.</li>
+    <li><strong>Продавать лицензию, а не квадратные метры.</strong> Мораторий сделал действующую лицензию главным элементом цены.</li>
+    <li><strong>Сделать due diligence по паводковому риску фирменным продуктом.</strong> 179 из 357 кемпингов под проверкой — этого не умеет никто из конкурентов.</li>
+    <li><strong>Строить собственную базу сделок €1–5 млн.</strong> Институциональной статистики нет; через два года это будет единственный защищаемый актив.</li>
+    <li><strong>Оценивать по EBITDA, не по цене за ключ.</strong> Внутренний стандарт: нормализованный EBITDA × 5–8, перекрёстно со стоимостью замещения.</li>
+    <li><strong>Показывать честную сезонность.</strong> 21,6% годовой загрузки в сельском сегменте и 40,1% в кемпингах — это то, что покупатель должен увидеть в первом документе, а не после сделки.</li>
+  </ol>
+
+  <h2><span class="num">8.</span> Чего в данных нет — и это тоже результат</h2>
+  <ul>
+    <li>Число сделок в разрезе €500 тыс.+ и €1 млн+ — INE и нотариат не публикуют разбивку по ценовым траншам. У idealista — <strong>объявления, а не сделки</strong></li>
+    <li>Институциональная статистика по сегменту €1–5 млн — не существует</li>
+    <li>Мультипликаторы EBITDA по испанским кемпингам</li>
+    <li>Количество голландских владельцев кемпингов в Испании; разбивка оборота «побережье vs Пиренеи»</li>
+    <li>Точный €/м² для голландцев и бельгийцев</li>
+    <li>Цены по Валь-д'Аран, Рипольес, Маресме; RevPAR внутренних районов Каталонии</li>
+    <li>Отдельный тариф туристического налога для кемпингов</li>
+  </ul>
+  <p><strong>Расхождения источников, не разрешённые:</strong> BBVA даёт три разные цифры прогноза цен на 2026 (+5,3%, +10,2%, +12%) · Registradores 13,92% (I кв.) → 15,98% (II кв. 2026) — скачок необъяснён · Барселона по инвестициям в отели 2025: €646 млн vs €470 млн (разные периметры) · Henley 2026: Сингапур 79,5 как №1 против ОАЭ 85,3 во вторичных пересказах.</p>
+
+  <h2><span class="num">9.</span> Отчёты аналитиков</h2>
+  <p class="meta">Дайджесты; полные тексты со списками источников — в <span class="tag">consilium/work/2026-08-13-market-scan/</span></p>
+
+  <details><summary>M1 · Изабель Морено <span class="role">— политика, регулирование, макро</span></summary><div class="dbody">
+    <p>Три изменения правил за 18 месяцев: Каталония строит собственный контур ограничений на покупку жилья · налоговый удар пришёл не по иностранцам, а по «крупным держателям» (ITP 20%) · туристическая рента дорожает и сжимается. Мадрид законодательно парализован — Junts ветирует всё с ноября 2025. Вывод: вектор в коммерцию верный, дефицит лицензий = премия к активу, Барселона теряет капитал в пользу побережья.</p>
+  </div></details>
+
+  <details><summary>M2 · Рикард Бош <span class="role">— жилой рынок в цифрах</span></summary><div class="dbody">
+    <p>714 237 сделок в 2025 (максимум за 18 лет), цены +12,9%, дефицит 750 тыс. жилищ. Каталония — 17% национального предложения €1 млн+, но средняя люксовая сделка Коста-Бравы ~€870 тыс. Три предупреждения: разбивки сделок по ценовым траншам не существует · idealista даёт объявления, а не сделки · Барселона показывает рост цены при падении оборота на 10,8%.</p>
+  </div></details>
+
+  <details><summary>M3 · Гельмут Байер <span class="role">— hospitality-инвестиции</span></summary><div class="dbody">
+    <p>Рекорд полугодия: €2 460 млн за 1П2026. Но €213 тыс./ключ и yield 5% — это 4–5★ и билеты €17–28 млн, к сегменту €1–5 млн неприменимо. Главная находка: <strong>институциональной статистики по малому сегменту не существует вообще</strong> — это и риск, и главная возможность. Оценивать надо по нормализованному EBITDA × 5–8, а не по цене за ключ.</p>
+  </div></details>
+
+  <details><summary>M4 · Марейке де Врис <span class="role">— кемпинги и outdoor hospitality</span></summary><div class="dbody">
+    <p>Каталония — 38% всех кемпинг-ночёвок Испании, 357 объектов, заполняемость 40,1%. Консолидация идёт: ECG/PAI, Meridia/wecamp, HolaCamp/Indotek — вместе ~10% рынка, но берут масштабные и прибрежные объекты. <strong>Ключевая гипотеза компании подтверждения не получила:</strong> оба её компонента реальны по отдельности, пересечение нигде не измерено. Плюс обнаружен риск Decret llei 4/2025 — 179 из 357 кемпингов под паводковой проверкой.</p>
+  </div></details>
+
+  <details><summary>M5 · Клара Мендес <span class="role">— иностранные покупатели</span></summary><div class="dbody">
+    <p>Британская эпоха закончилась (21,91% → 6,82% за декаду). Голландцы — новые короли нерезидентов. Но рынок иностранцев <strong>не растёт, а перераспределяется</strong>: от курортных нерезидентов к иностранцам, живущим в Испании. В Каталонии 81% иностранных покупателей — резиденты, среди нерезидентов доминируют французы (34,8%). Голландцев и бельгийцев в топе по цене за метр нет — их сила в объёме.</p>
+  </div></details>
+
+  <details><summary>M6 · Нурия Кампс <span class="role">— туристический спрос</span></summary><div class="dbody">
+    <p>Каталония впервые &gt;20 млн иностранных туристов, расходы растут в 7 раз быстрее потока. Кемпинги — сильнейший сегмент (+4,5% в 2025), но во II кв. 2026 ушли в минус. Сельский туризм растёт <strong>ценой, а не загрузкой</strong> (+8,9% при 21,6% загрузки). Климатическое бегство в горы каталонскими данными не подтверждается. Новый риск: с 01.10.2026 муниципалитеты могут вводить надбавку до 4 €/ночь.</p>
+  </div></details>
+
+  <details><summary>M7 · Томас Ренье <span class="role">— конкурентная карта</span></summary><div class="dbody">
+    <p>Ниша €1–10 млн с buy-side мандатом действительно провалена между институционалами и traspaso-брокерами. Два реальных конкурента, а не абстракции: <strong>GG Real Estate Barcelona</strong> (русскоязычный отельный buy-side с закрытой базой) и <strong>ACSI Broker Services</strong> (пан-европейская M&amp;A-платформа по кемпингам с голландским брендом). Пусто по кемпингам со стороны покупателя: Concerto и ACSI держат мандаты продавцов.</p>
+  </div></details>
+
+  <details><summary>M8 · Эйтан Барух <span class="role">— миграция капитала</span></summary><div class="dbody">
+    <p>Испания проигрывает гонку за глобального миллионера по налоговой упаковке, но выигрывает по объёму рынка и по тому, что покупателю второго дома резидентство часто не нужно. Голландцы впервые обогнали немцев и британцев как первая нация нерезидентов — но их география Аликанте и Малага, не Каталония. Смежная маржа — в школах, медицине и налоговом сопровождении, а не в релокации.</p>
+  </div></details>
+
+  <details><summary>M9 · Лаура Финк <span class="role">— климат и риски</span></summary><div class="dbody">
+    <p>Тезис «Каталония = засуха» устарел: водохранилища на 94,68%, режим нормальности. Зато пожар стал риском №1 по деньгам (2026: +38,2% выгоревшей площади, застраховано менее 20% ущерба), а паводковый режим для кемпингов — риском №1 по ликвидности актива. Отказ банка приходит через страховщика: проверять страхуемость надо до торга по цене. Чек-лист из 9 пунктов до сделки.</p>
+  </div></details>
+
+  <p class="footer-note">Отчёт консилиума Compass Key Realty №3 · синтез координатора по девяти исследовательским документам · ~150 поисковых запросов на пяти языках, 13.08.2026. Прямой доступ к сайтам из рабочего окружения заблокирован сетевой политикой: первичные PDF отчётов не открывались, цифры взяты из результатов поиска и публичных пересказов. Полные тексты с URL источников — в репозитории, папка <span class="tag">spain-re/consilium/</span>.</p>
+</div>
