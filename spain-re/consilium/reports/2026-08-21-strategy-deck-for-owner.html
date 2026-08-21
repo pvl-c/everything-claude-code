@@ -1,972 +1,511 @@
-<title>Два года и одна ниша</title>
+<title>Другой бизнес</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;1,6..72,300&display=swap">
 
 <style>
 :root{
-  --paper:#EEF0EA;
-  --surface:#F7F8F4;
-  --sunk:#E4E7DE;
-  --ink:#171C18;
-  --ink2:#3B453D;
-  --muted:#6B756C;
-  --line:#D2D7CC;
-  --line-soft:#E1E5DB;
-  --accent:#215C71;
-  --accent-ink:#194A5C;
-  --accent-soft:#DEE9ED;
-  --warn:#8E5220;
-  --warn-soft:#F0E3D4;
+  --paper:#EEF0EA; --surface:#F7F8F4; --sunk:#E4E7DE;
+  --ink:#171C18; --ink2:#3B453D; --muted:#6B756C;
+  --line:#D2D7CC; --line-soft:#E1E5DB;
+  --accent:#215C71; --accent-soft:#DEE9ED;
+  --warn:#8E5220; --warn-soft:#F0E3D4;
   --good:#3B6642;
-
   --f-display:"Newsreader",Georgia,"Times New Roman",serif;
   --f-body:"Archivo","Helvetica Neue",Arial,sans-serif;
   --f-mono:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Menlo,monospace;
-
   --rail:clamp(0px,4vw,84px);
   --pad:clamp(22px,4.4vw,72px);
-  --measure:74ch;
 }
-
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
-    --paper:#111511;
-    --surface:#181D19;
-    --sunk:#1E241F;
-    --ink:#E9ECE4;
-    --ink2:#C2C9BE;
-    --muted:#8B948A;
-    --line:#2C332D;
-    --line-soft:#232A24;
-    --accent:#84B4C6;
-    --accent-ink:#9CC6D6;
-    --accent-soft:#172C34;
-    --warn:#D0965C;
-    --warn-soft:#31241A;
+    --paper:#111511; --surface:#181D19; --sunk:#1E241F;
+    --ink:#E9ECE4; --ink2:#C2C9BE; --muted:#8B948A;
+    --line:#2C332D; --line-soft:#232A24;
+    --accent:#84B4C6; --accent-soft:#172C34;
+    --warn:#D0965C; --warn-soft:#31241A;
     --good:#7FA983;
   }
 }
 :root[data-theme="dark"]{
-  --paper:#111511;
-  --surface:#181D19;
-  --sunk:#1E241F;
-  --ink:#E9ECE4;
-  --ink2:#C2C9BE;
-  --muted:#8B948A;
-  --line:#2C332D;
-  --line-soft:#232A24;
-  --accent:#84B4C6;
-  --accent-ink:#9CC6D6;
-  --accent-soft:#172C34;
-  --warn:#D0965C;
-  --warn-soft:#31241A;
+  --paper:#111511; --surface:#181D19; --sunk:#1E241F;
+  --ink:#E9ECE4; --ink2:#C2C9BE; --muted:#8B948A;
+  --line:#2C332D; --line-soft:#232A24;
+  --accent:#84B4C6; --accent-soft:#172C34;
+  --warn:#D0965C; --warn-soft:#31241A;
   --good:#7FA983;
 }
 
 *{box-sizing:border-box}
 html{scroll-behavior:smooth}
 body{
-  margin:0;
-  background:var(--paper);
-  color:var(--ink);
-  font-family:var(--f-body);
-  font-size:clamp(15px,1.02vw,17px);
-  line-height:1.6;
+  margin:0;background:var(--paper);color:var(--ink);
+  font-family:var(--f-body);font-size:clamp(15px,1.02vw,17px);line-height:1.55;
   -webkit-font-smoothing:antialiased;
 }
-@media (prefers-reduced-motion: reduce){
-  html{scroll-behavior:auto}
-  *{animation:none !important;transition:none !important}
-}
+@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}*{animation:none!important;transition:none!important}}
 
-/* ---------- deck mechanics ---------- */
-.deck{
-  height:100svh;
-  overflow-y:auto;
-  overflow-x:hidden;
-  scroll-snap-type:y proximity;
-  scroll-padding-top:0;
-}
+.deck{height:100svh;overflow-y:auto;overflow-x:hidden;scroll-snap-type:y proximity}
 .slide{
-  min-height:100svh;
-  scroll-snap-align:start;
-  display:flex;
-  align-items:center;
-  padding:clamp(52px,7vh,96px) var(--pad) clamp(60px,8vh,104px) calc(var(--pad) + var(--rail));
+  min-height:100svh;scroll-snap-align:start;display:flex;align-items:center;
+  padding:clamp(46px,6vh,84px) var(--pad) clamp(56px,7vh,92px) calc(var(--pad) + var(--rail));
   border-bottom:1px solid var(--line-soft);
-  position:relative;
 }
-.wrap{width:100%;max-width:1080px;margin:0 auto}
+.wrap{width:100%;max-width:1100px;margin:0 auto}
 
-/* ---------- rail ---------- */
-.rail{
-  position:fixed;
-  left:0;top:0;bottom:0;
-  width:calc(var(--pad) + var(--rail));
-  display:flex;flex-direction:column;justify-content:center;align-items:center;
-  gap:14px;
-  pointer-events:none;
-  z-index:5;
-}
-.rail-part{
-  font-family:var(--f-mono);
-  font-size:11px;letter-spacing:.14em;text-transform:uppercase;
-  color:var(--muted);
-  writing-mode:vertical-rl;
-  transform:rotate(180deg);
-  white-space:nowrap;
-  transition:color .3s ease;
-}
-.rail-num{
-  font-family:var(--f-display);
-  font-size:26px;line-height:1;
-  color:var(--accent);
-  font-variant-numeric:tabular-nums;
-}
-.rail-tick{width:1px;flex:0 0 clamp(40px,10vh,110px);background:var(--line)}
-@media (max-width:860px){.rail{display:none}}
+.rail{position:fixed;left:0;top:0;bottom:0;width:calc(var(--pad) + var(--rail));
+  display:flex;flex-direction:column;justify-content:center;align-items:center;gap:14px;
+  pointer-events:none;z-index:5}
+.rail-num{font-family:var(--f-display);font-size:30px;line-height:1;color:var(--accent);font-variant-numeric:tabular-nums}
+.rail-tick{width:1px;flex:0 0 clamp(36px,9vh,100px);background:var(--line)}
+.rail-part{font-family:var(--f-mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--muted);writing-mode:vertical-rl;transform:rotate(180deg);white-space:nowrap}
+@media (max-width:880px){.rail{display:none}}
 
-/* ---------- progress ---------- */
-.progress{
-  position:fixed;left:0;right:0;bottom:0;height:2px;
-  background:var(--line-soft);z-index:9;
-}
+.progress{position:fixed;left:0;right:0;bottom:0;height:2px;background:var(--line-soft);z-index:9}
 .progress span{display:block;height:100%;width:0;background:var(--accent);transition:width .18s linear}
 
-/* ---------- type ---------- */
-.eyebrow{
-  font-family:var(--f-mono);
-  font-size:11px;letter-spacing:.16em;text-transform:uppercase;
-  color:var(--accent);
-  margin:0 0 clamp(16px,2.4vh,26px);
-}
+.eyebrow{font-family:var(--f-mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--accent);margin:0 0 clamp(14px,2vh,22px)}
 .eyebrow.plain{color:var(--muted)}
-h1{
-  font-family:var(--f-display);
-  font-weight:400;
-  font-size:clamp(44px,7.4vw,104px);
-  line-height:.98;
-  letter-spacing:-.02em;
-  margin:0 0 .38em;
-  text-wrap:balance;
-}
-h2{
-  font-family:var(--f-display);
-  font-weight:400;
-  font-size:clamp(29px,4.1vw,54px);
-  line-height:1.08;
-  letter-spacing:-.015em;
-  margin:0 0 clamp(20px,3vh,34px);
-  max-width:19ch;
-  text-wrap:balance;
-}
-h2.wide{max-width:26ch}
-h3{
-  font-family:var(--f-body);
-  font-weight:600;
-  font-size:clamp(15px,1.15vw,18px);
-  line-height:1.3;
-  margin:0 0 .5em;
-  letter-spacing:-.005em;
-}
-p{margin:0 0 1.05em;max-width:var(--measure);color:var(--ink2)}
-p.lead{
-  font-family:var(--f-display);
-  font-size:clamp(19px,2vw,26px);
-  line-height:1.42;
-  color:var(--ink);
-  font-weight:300;
-  max-width:44ch;
-}
+h1{font-family:var(--f-display);font-weight:400;font-size:clamp(46px,7.6vw,108px);line-height:.96;
+  letter-spacing:-.022em;margin:0 0 .34em;text-wrap:balance}
+h2{font-family:var(--f-display);font-weight:400;font-size:clamp(28px,3.9vw,50px);line-height:1.06;
+  letter-spacing:-.015em;margin:0 0 clamp(18px,2.6vh,30px);max-width:22ch;text-wrap:balance}
+h3{font-family:var(--f-body);font-weight:600;font-size:clamp(14px,1.05vw,16.5px);line-height:1.3;
+  margin:0 0 .45em;letter-spacing:-.004em;color:var(--ink)}
+p{margin:0 0 .95em;max-width:70ch;color:var(--ink2)}
 p:last-child{margin-bottom:0}
+p.lead{font-family:var(--f-display);font-size:clamp(19px,2.05vw,27px);line-height:1.4;
+  color:var(--ink);font-weight:300;max-width:46ch}
 strong{font-weight:600;color:var(--ink)}
-em{font-style:italic}
-.sub{color:var(--muted);font-size:.9em}
+.sub{color:var(--muted);font-size:.88em}
 
-/* ---------- pull quote ---------- */
-.pull{
-  border-left:2px solid var(--accent);
-  padding:2px 0 2px clamp(16px,1.6vw,24px);
-  margin:clamp(22px,3vh,34px) 0;
-  max-width:52ch;
-}
-.pull p{
-  font-family:var(--f-display);
-  font-size:clamp(19px,1.95vw,27px);
-  line-height:1.34;
-  color:var(--ink);
-  font-weight:400;
-  margin:0;
-  max-width:none;
-}
+.pull{border-left:2px solid var(--accent);padding:2px 0 2px clamp(15px,1.5vw,22px);
+  margin:clamp(20px,2.6vh,30px) 0;max-width:56ch}
+.pull p{font-family:var(--f-display);font-size:clamp(18px,1.9vw,26px);line-height:1.32;
+  color:var(--ink);font-weight:400;margin:0;max-width:none}
 .pull.warn{border-left-color:var(--warn)}
 
-/* ---------- lists ---------- */
-ul.plain{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:clamp(13px,1.7vh,19px)}
-ul.plain > li{
-  padding-left:22px;position:relative;color:var(--ink2);max-width:var(--measure);
-}
-ul.plain > li::before{
-  content:"";position:absolute;left:0;top:.62em;
-  width:7px;height:1px;background:var(--accent);
-}
+ul.plain{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:clamp(11px,1.5vh,17px)}
+ul.plain > li{padding-left:21px;position:relative;color:var(--ink2);max-width:66ch}
+ul.plain > li::before{content:"";position:absolute;left:0;top:.6em;width:7px;height:1px;background:var(--accent)}
 ul.dash > li::before{background:var(--muted);width:9px}
 
-ol.steps{
-  list-style:none;padding:0;margin:0;counter-reset:s;
-  display:flex;flex-direction:column;gap:clamp(16px,2.2vh,26px);
-}
-ol.steps > li{counter-increment:s;padding-left:44px;position:relative;max-width:var(--measure)}
-ol.steps > li::before{
-  content:counter(s);
-  position:absolute;left:0;top:-.06em;
-  font-family:var(--f-display);font-size:24px;line-height:1;
-  color:var(--accent);font-variant-numeric:tabular-nums;
-}
+ol.steps{list-style:none;padding:0;margin:0;counter-reset:s;display:flex;flex-direction:column;gap:clamp(13px,1.9vh,22px)}
+ol.steps > li{counter-increment:s;padding-left:42px;position:relative;max-width:66ch}
+ol.steps > li::before{content:counter(s);position:absolute;left:0;top:-.08em;
+  font-family:var(--f-display);font-size:23px;line-height:1;color:var(--accent);font-variant-numeric:tabular-nums}
 
-/* ---------- grids ---------- */
-.cols{display:grid;gap:clamp(20px,2.6vw,40px)}
+.cols{display:grid;gap:clamp(16px,2.2vw,32px)}
 .c2{grid-template-columns:repeat(2,minmax(0,1fr))}
 .c3{grid-template-columns:repeat(3,minmax(0,1fr))}
-@media (max-width:820px){.c2,.c3{grid-template-columns:1fr}}
-.cols p, .cols ul.plain > li{max-width:46ch}
+@media (max-width:840px){.c2,.c3{grid-template-columns:1fr}}
+.cols p,.cols ul.plain > li{max-width:44ch}
 
-.card{
-  background:var(--surface);
-  border:1px solid var(--line-soft);
-  padding:clamp(18px,2vw,26px);
-}
-.card h3{color:var(--ink)}
-.card p{font-size:.94em;margin-bottom:.7em}
+.card{background:var(--surface);border:1px solid var(--line-soft);padding:clamp(16px,1.8vw,24px)}
+.card p{font-size:.93em;margin-bottom:.6em}
 .card p:last-child{margin-bottom:0}
+.card ul.plain > li{font-size:.93em}
 .card.accent{border-color:var(--accent);background:var(--accent-soft)}
 .card.risk{border-color:var(--warn);background:var(--warn-soft)}
 
-/* ---------- stats ---------- */
-.stats{display:flex;flex-wrap:wrap;gap:clamp(24px,4vw,64px);margin:clamp(20px,3vh,34px) 0}
-.stat{min-width:150px;max-width:30ch}
-.stat b{
-  display:block;
-  font-family:var(--f-display);
-  font-weight:400;
-  font-size:clamp(38px,5vw,68px);
-  line-height:1;
-  color:var(--accent);
-  letter-spacing:-.02em;
-  font-variant-numeric:tabular-nums;
-  margin-bottom:.24em;
-}
-.stat span{display:block;font-size:.9em;color:var(--ink2);line-height:1.45}
+.stats{display:flex;flex-wrap:wrap;gap:clamp(20px,3.4vw,54px);margin:clamp(16px,2.4vh,28px) 0}
+.stat{min-width:130px;max-width:28ch}
+.stat b{display:block;font-family:var(--f-display);font-weight:400;font-size:clamp(34px,4.4vw,60px);
+  line-height:1;color:var(--accent);letter-spacing:-.02em;font-variant-numeric:tabular-nums;margin-bottom:.22em}
+.stat span{display:block;font-size:.88em;color:var(--ink2);line-height:1.42}
 
-/* ---------- table ---------- */
-.tablewrap{overflow-x:auto;margin:clamp(18px,2.4vh,28px) 0;border-top:1px solid var(--line)}
-table{border-collapse:collapse;width:100%;min-width:560px;font-size:.92em}
-th,td{text-align:left;padding:12px 18px 12px 0;border-bottom:1px solid var(--line-soft);vertical-align:top;color:var(--ink2)}
-th{
-  font-family:var(--f-mono);font-weight:400;font-size:10.5px;
-  letter-spacing:.13em;text-transform:uppercase;color:var(--muted);
-  padding-top:14px;padding-bottom:10px;
-}
+.tablewrap{overflow-x:auto;margin:clamp(14px,2vh,24px) 0;border-top:1px solid var(--line)}
+table{border-collapse:collapse;width:100%;min-width:600px;font-size:.9em}
+th,td{text-align:left;padding:11px 20px 11px 0;border-bottom:1px solid var(--line-soft);vertical-align:top;color:var(--ink2)}
+th{font-family:var(--f-mono);font-weight:400;font-size:10.5px;letter-spacing:.13em;text-transform:uppercase;
+  color:var(--muted);padding-top:13px;padding-bottom:9px}
+th.hi{color:var(--accent)}
+td.hi{color:var(--ink)}
 td.now{color:var(--warn)}
-td.yes{color:var(--good)}
 td b{color:var(--ink)}
+td:first-child{width:15%;min-width:110px}
 
-/* ---------- layered market ---------- */
-.layers{display:flex;flex-direction:column;margin:clamp(18px,2.6vh,30px) 0;border:1px solid var(--line)}
-.layer{padding:clamp(15px,1.9vw,24px);border-bottom:1px solid var(--line)}
+.layers{display:flex;flex-direction:column;margin:clamp(14px,2.2vh,26px) 0;border:1px solid var(--line)}
+.layer{padding:clamp(13px,1.6vw,20px);border-bottom:1px solid var(--line)}
 .layer:last-child{border-bottom:0}
 .layer.open{background:var(--accent-soft);border-top:1px solid var(--accent);border-bottom:1px solid var(--accent)}
-.layer .tier{
-  font-family:var(--f-mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;
-  color:var(--muted);display:block;margin-bottom:5px;
-}
+.layer .tier{font-family:var(--f-mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--muted);display:block;margin-bottom:4px}
 .layer.open .tier{color:var(--accent)}
-.layer .who{color:var(--ink2);font-size:.96em}
+.layer .who{color:var(--ink2);font-size:.95em}
 .layer.open .who{color:var(--ink);font-weight:500}
 
-/* ---------- gate ---------- */
-.gate{
-  margin-top:clamp(22px,3vh,32px);
-  border-top:1px solid var(--accent);
-  padding-top:14px;
-  font-family:var(--f-mono);
-  font-size:12.5px;
-  line-height:1.6;
-  color:var(--ink2);
-  max-width:62ch;
-}
-.gate b{font-family:var(--f-body);font-weight:600;color:var(--accent);letter-spacing:.02em}
+.phases{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1px;background:var(--line);
+  border:1px solid var(--line);margin:clamp(14px,2.2vh,26px) 0}
+@media (max-width:840px){.phases{grid-template-columns:1fr}}
+.phase{background:var(--surface);padding:clamp(14px,1.5vw,20px)}
+.phase .mo{font-family:var(--f-mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--accent);display:block;margin-bottom:7px}
+.phase h3{margin-bottom:.5em}
+.phase p{font-size:.88em;margin:0;color:var(--ink2)}
 
-/* ---------- title slide ---------- */
+.gate{margin-top:clamp(18px,2.4vh,28px);border-top:1px solid var(--accent);padding-top:13px;
+  font-family:var(--f-mono);font-size:12.5px;line-height:1.6;color:var(--ink2);max-width:66ch}
+.gate b{font-family:var(--f-body);font-weight:600;color:var(--accent)}
+
 .title-slide{align-items:flex-end}
-.title-slide .wrap{padding-bottom:clamp(10px,4vh,40px)}
-.title-meta{
-  display:flex;flex-wrap:wrap;gap:8px 26px;
-  font-family:var(--f-mono);font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;
-  color:var(--muted);
-  border-top:1px solid var(--line);
-  padding-top:16px;margin-top:clamp(28px,5vh,56px);
-}
-.hint{
-  font-family:var(--f-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;
-  color:var(--muted);margin-top:22px;
-}
-.hint kbd{
-  font-family:var(--f-mono);border:1px solid var(--line);padding:1px 5px;
-  border-radius:2px;color:var(--ink2);font-size:10.5px;
-}
+.title-slide .wrap{padding-bottom:clamp(8px,3.5vh,36px)}
+.title-meta{display:flex;flex-wrap:wrap;gap:8px 26px;font-family:var(--f-mono);font-size:11.5px;
+  letter-spacing:.1em;text-transform:uppercase;color:var(--muted);
+  border-top:1px solid var(--line);padding-top:15px;margin-top:clamp(24px,4vh,48px)}
+.hint{font-family:var(--f-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-top:20px}
+.hint kbd{font-family:var(--f-mono);border:1px solid var(--line);padding:1px 5px;border-radius:2px;color:var(--ink2);font-size:10.5px}
 @media (max-width:700px){.hint{display:none}}
 
-.footnote{
-  font-size:.85em;color:var(--muted);border-top:1px solid var(--line-soft);
-  padding-top:14px;margin-top:clamp(22px,3vh,32px);max-width:64ch;
-}
-.divider-num{
-  font-family:var(--f-display);
-  font-size:clamp(60px,11vw,150px);
-  line-height:.85;
-  color:var(--line);
-  margin:0 0 .1em;
-  letter-spacing:-.03em;
-}
+.footnote{font-size:.84em;color:var(--muted);border-top:1px solid var(--line-soft);
+  padding-top:13px;margin-top:clamp(18px,2.4vh,28px);max-width:66ch}
+
+.verdict{border:1px solid var(--accent);background:var(--accent-soft);padding:clamp(22px,3vw,42px)}
+.verdict p{font-family:var(--f-display);font-size:clamp(20px,2.3vw,32px);line-height:1.32;
+  color:var(--ink);font-weight:300;max-width:40ch}
+.verdict p + p{margin-top:.7em}
 </style>
 
 <div class="rail" aria-hidden="true">
-  <div class="rail-num" id="railNum">I</div>
+  <div class="rail-num" id="railNum">01</div>
   <div class="rail-tick"></div>
-  <div class="rail-part" id="railPart">Начало</div>
+  <div class="rail-part" id="railPart">Где мы</div>
 </div>
 <div class="progress"><span id="bar"></span></div>
 
 <main class="deck" id="deck">
 
-<!-- 1 -->
-<section class="slide title-slide" data-part="I" data-name="Начало">
+<section class="slide title-slide" data-part="00" data-name="Начало">
   <div class="wrap">
     <p class="eyebrow">Compass Key Realty · август 2026</p>
-    <h1>Два года<br>и одна ниша</h1>
-    <p class="lead">Что показал рынок, что делают конкуренты, какую позицию я предлагаю занять — и с чего начать в ближайшие девяносто дней.</p>
-    <div class="title-meta">
-      <span>Свод по десяти отчётам</span>
-      <span>Девять экспертных панелей</span>
-      <span>Каталония</span>
-    </div>
+    <h1>Другой<br>бизнес</h1>
+    <p class="lead">Переход от услуг и жилой недвижимости к инвестиционным сделкам: что для этого нужно, чего это стоит и с чего начать.</p>
+    <div class="title-meta"><span>Свод по десяти отчётам</span><span>Каталония</span><span>10 минут</span></div>
     <p class="hint"><kbd>&darr;</kbd> или <kbd>Space</kbd> — дальше</p>
   </div>
 </section>
 
-<!-- 2 -->
-<section class="slide" data-part="I" data-name="Начало">
+<section class="slide" data-part="01" data-name="Где мы">
   <div class="wrap">
-    <p class="eyebrow">Часть I · Начало</p>
-    <h2>Откуда это взялось и чему здесь верить</h2>
+    <p class="eyebrow">01 · Где Compass Key сейчас</p>
+    <h2>Продукт уже в целевом чеке. Всё остальное — нет</h2>
     <div class="cols c2">
       <div>
-        <p>В основе — только ваши документы: срез компании, стратегия по недвижимости, стратегия по страхованию, итоги стратегической встречи и снимок сайта. Поверх них — девять экспертных панелей и около тысячи двухсот поисковых запросов на восьми языках.</p>
-        <p>Результат — десять отчётов. Этот документ их сводит.</p>
-      </div>
-      <div>
-        <ul class="plain dash">
-          <li><strong>Это кабинетная работа, а не полевое исследование.</strong> Прямого доступа к сайтам и первичным отчётам консультантов не было — всё восстановлено по поисковой выдаче.</li>
-          <li><strong>Реальных цифр компании нет ни в одном документе.</strong> Вся экономика ниже — модель на рыночных ставках. Заменить её фактом из бухгалтерии — действие номер один.</li>
-          <li><strong>Прежде чем называть цифру в переговорах</strong>, берите её из первоисточника. Особенно налоговые ставки и режим лицензий: они менялись трижды за прошлый год.</li>
+        <ul class="plain">
+          <li><strong>Витрина уже там, куда вы хотите:</strong> четыре объекта из пяти дороже миллиона, включая масию с проектом кемпинга.</li>
+          <li><strong>Упаковка — нет.</strong> Одностраничник на русском языке, объекты поданы как жильё: фото и цена.</li>
+          <li><strong>Поток клиентов идёт через личную сеть</strong> и репутацию из медицинского туризма, а не через рынок.</li>
+          <li><strong>Команда — шесть человек, двое юристов</strong>, все независимые предприниматели. Данные о клиентах и объектах живут в переписке.</li>
         </ul>
       </div>
-    </div>
-  </div>
-</section>
-
-<!-- 3 -->
-<section class="slide" data-part="II" data-name="Рынок">
-  <div class="wrap">
-    <p class="eyebrow">Часть II · Рынок</p>
-    <h2 class="wide">За три года под жильём переписали почти всё</h2>
-    <ol class="steps">
-      <li><strong>Покупка недвижимости больше не даёт вид на жительство.</strong> Раньше человек решал два вопроса одной сделкой. Теперь — двумя, и второй он решает не с вами.</li>
-      <li><strong>За долгосрочную аренду платит собственник, а не жилец.</strong> В той части рынка, где подбирали квартиру человеку, платить стало просто некому.</li>
-      <li><strong>Предложение аренды в Каталонии упало почти втрое за два года.</strong> Услуга «подбор» существует, пока есть из чего выбирать.</li>
-      <li><strong>Двести семьдесят один муниципалитет живёт с потолком арендных ставок</strong> — это около девяноста процентов населения региона. И готовится закон против спекулятивной покупки.</li>
-      <li><strong>Барселона гасит туристические лицензии на жильё</strong> к 2028 году.</li>
-    </ol>
-    <div class="pull"><p>Всё перечисленное — про жильё. Коммерческая аренда под жилищный закон не подпадает вообще.</p></div>
-  </div>
-</section>
-
-<!-- 4 -->
-<section class="slide" data-part="II" data-name="Рынок">
-  <div class="wrap">
-    <p class="eyebrow">Часть II · Рынок</p>
-    <h2>Но уходить надо не потому, что жильё умерло</h2>
-    <p>Расхожее объяснение — «в жилье кончились деньги» — данными не подтверждается. Оборот агентского сектора за прошлый год вырос, комиссии держатся на прежнем уровне, а доля сделок, проходящих через агентство, на историческом максимуме. Люди не перестали пользоваться агентами.</p>
-    <div class="stats">
-      <div class="stat"><b>60 000</b><span>компаний в посредничестве по Испании</span></div>
-      <div class="stat"><b>+15 000</b><span>новых агентств открылось за один прошлый год</span></div>
-    </div>
-    <div class="pull"><p>Умирает не рынок. Умирает возможность зарабатывать, ничем не отличаясь от соседа.</p></div>
-    <p>Пирог растёт примерно на девять процентов в год. Число тех, кто его делит, растёт быстрее. Выручка на одно агентство стоит на месте не потому, что упала цена услуги, а потому что поток разбавляется.</p>
-  </div>
-</section>
-
-<!-- 5 -->
-<section class="slide" data-part="II" data-name="Рынок">
-  <div class="wrap">
-    <p class="eyebrow">Часть II · Рынок</p>
-    <h2>Что коммерция даёт — и чего не даёт</h2>
-    <div class="cols c2">
       <div class="card accent">
-        <h3>Даёт</h3>
-        <p><strong>Доход со сделки выше в три-пять раз.</strong> А часов на неё уходит не в пять раз больше.</p>
-        <p><strong>Регуляторный иммунитет.</strong> Жилищные законы сюда не дотягиваются.</p>
-        <p><strong>Клиента, который возвращается.</strong> Покупатель квартиры приходит раз в семь-десять лет, по жизненному событию. Владелец доходного объекта покупает регулярно, а между покупками ему нужны управление, переоценка и выход. Это разница в модели бизнеса, а не в размере комиссии.</p>
-      </div>
-      <div class="card">
-        <h3>Не даёт</h3>
-        <p><strong>Объёма.</strong> Три-шесть сделок в год вместо десятка.</p>
-        <p><strong>Скорости.</strong> Цикл вдвое-втрое длиннее.</p>
-        <p><strong>Предсказуемости.</strong> Год может закрыться одной сделкой, а может ни одной.</p>
-        <p><strong>Возможности купить клиента за деньги.</strong> Обращения в этом сегменте не существует как товара — его нельзя заказать рекламой.</p>
+        <h3>Что из этого актив</h3>
+        <p>Двадцать три года в Испании и собственная история. Юридическая глубина внутри команды. Понимание, как продаются объекты вне открытого рынка. Витрина в нужном чеке.</p>
+        <p><strong>Чего нет:</strong> ни одной публично описанной закрытой сделки в инвестиционном сегменте — и это зафиксировано вашими же словами в срезе компании.</p>
       </div>
     </div>
-    <p class="footnote">Выигрыш в комиссии наполовину съедается падением числа сделок. Не съедается только возвращаемость клиента — ради неё всё и делается.</p>
+    <div class="pull"><p>Продукт опережает упаковку. Это редкая и хорошая стартовая позиция — но она же и создаёт иллюзию, что переход уже наполовину сделан.</p></div>
   </div>
 </section>
 
-<!-- 6 -->
-<section class="slide" data-part="II" data-name="Рынок">
+<section class="slide" data-part="02" data-name="Что сейчас">
   <div class="wrap">
-    <p class="eyebrow">Часть II · Рынок</p>
-    <h2>Где именно свободно</h2>
+    <p class="eyebrow">02 · Какой бизнес ведётся фактически</p>
+    <h2>Сегодня это шесть разных бизнесов на одном человеке</h2>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Направление</th><th>Что это на самом деле</th></tr></thead>
+        <tbody>
+          <tr><td><b>Сделки с жильём</b></td><td>Основной доход и главный источник часов</td></tr>
+          <tr><td><b>Аренда</b></td><td class="now">Закрыта законом: комиссию с жильца брать нельзя, предложение упало почти втрое. В этой воронке нет платящей стороны</td></tr>
+          <tr><td><b>Релокация и документы</b></td><td>Конвейер с коротким циклом — единственное, где реклама окупается с запасом</td></tr>
+          <tr><td><b>Страхование</b></td><td>Повторяемый годовой доход, но только как вторая продажа. Приводить клиента рекламой дороже, чем полис приносит</td></tr>
+          <tr><td><b>Медицина</b></td><td>Не бизнес, а вход и доверие. Час координации приносит в разы меньше часа на сделке</td></tr>
+          <tr><td><b>Инвестиционные объекты</b></td><td class="hi">Витрина есть, повторяемого процесса — нет</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="pull warn"><p>Ровно те направления, которые целевая стратегия предписывает отрезать, — сегодня они и кормят.</p></div>
+    <p class="footnote">И отдельная проблема, которая мешает считать: реального отчёта о прибылях и убытках нет ни в одном документе. Сколько на самом деле приносит каждое направление и сколько стоит ваш час — сегодня не знает никто.</p>
+  </div>
+</section>
+
+<section class="slide" data-part="03" data-name="Куда идём">
+  <div class="wrap">
+    <p class="eyebrow">03 · Куда вы хотите перейти</p>
+    <h2>Цель сформулирована вами и она правильная</h2>
+    <p class="lead">«Оставить только проект для крупных инвесторов. Расширить их базу и работать над крупными проектами — покупка отельного бизнеса например. Узко специализироваться в этом направлении».</p>
+    <p class="sub" style="margin-top:.6em">— из среза компании, блок «Позиционирование»</p>
+    <div class="cols c3" style="margin-top:clamp(20px,3vh,32px)">
+      <div class="card"><h3>Кто клиент</h3><p>Инвестор, покупающий доходный объект, а не жильё для себя.</p></div>
+      <div class="card"><h3>Что за объекты</h3><p>Операционные активы: малые отели, кемпинги, масии. Каталония.</p></div>
+      <div class="card"><h3>С какой стороны стола</h3><p>Со стороны покупателя. Комиссию от продавца по целевому классу не берём.</p></div>
+    </div>
+    <div class="pull"><p>Разрыв не в амбиции. Разрыв в том, что это не следующая ступень той же лестницы — это соседняя лестница.</p></div>
+  </div>
+</section>
+
+<section class="slide" data-part="04" data-name="Другой бизнес">
+  <div class="wrap">
+    <p class="eyebrow">04 · Почему это действительно другой бизнес</p>
+    <h2>Шесть измерений, и совпадает только одно</h2>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th></th><th>Сегодня</th><th class="hi">Инвестиционные сделки</th></tr></thead>
+        <tbody>
+          <tr><td><b>Клиент</b></td><td>Покупает эмоцией, за один-два визита, решает сам</td><td class="hi">Решает таблицей за два-шесть месяцев. И не один: есть супруг с правом вето и налоговый советник, который выдаёт разрешение</td></tr>
+          <tr><td><b>Доверие</b></td><td>Личная рекомендация, отзывы «помогли адаптироваться»</td><td class="hi">Публичная история сделок и готовность сказать «не покупайте»</td></tr>
+          <tr><td><b>Цикл сделки</b></td><td>Два-четыре месяца</td><td class="hi">Девять-восемнадцать месяцев. Первые деньги на четвёртом-шестом, первый гонорар за результат — на десятом-четырнадцатом</td></tr>
+          <tr><td><b>Компетенции</b></td><td>Показ, переговоры, сопровождение до нотариуса</td><td class="hi">Нормализация отчётности, оценка бизнеса, лицензии и землепользование, структура сделки через юридическое лицо</td></tr>
+          <tr><td><b>Контент</b></td><td>Фотографии объекта</td><td class="hi">Расчёт по объекту, инвестиционный меморандум, разбор объекта, от которого отговорили</td></tr>
+          <tr><td><b>Экономика</b></td><td>Много сделок, короткий цикл, ровный доход</td><td class="hi">Две-четыре сделки в год, гонорар в разы выше, доход неровный: год может закрыться одной сделкой, а может ни одной</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p><strong>Переносится ровно одно:</strong> дисциплина сделки — нотариус, реестр, налоги, сроки — и умение вести переговоры. Оценка по сравнимым продажам, эмоциональная продажа, база покупателей жилья и портальные каналы не переносятся вообще.</p>
+    <div class="pull"><p>Полный расчёт по одному объекту занимает четыре-восемь часов. Это новая норма выработки, и её нельзя сделать между показами.</p></div>
+  </div>
+</section>
+
+<section class="slide" data-part="05" data-name="Рынок">
+  <div class="wrap">
+    <p class="eyebrow">05 · Рынок операционных активов</p>
+    <h2>Дефицитен не покупатель. Дефицитен объект</h2>
     <div class="layers">
-      <div class="layer">
-        <span class="tier">Выше десяти миллионов</span>
-        <span class="who">Colliers, CBRE, Christie &amp; Co, Savills, JLL — плотно занято</span>
-      </div>
-      <div class="layer open">
-        <span class="tier">От одного до десяти миллионов</span>
-        <span class="who">Почти никого. Особенно со стороны покупателя</span>
-      </div>
-      <div class="layer">
-        <span class="tier">Ниже полумиллиона</span>
-        <span class="who">Брокеры готового бизнеса, доски объявлений — плотно занято</span>
-      </div>
+      <div class="layer"><span class="tier">Выше десяти миллионов</span><span class="who">Colliers, CBRE, Christie &amp; Co, Savills — плотно занято</span></div>
+      <div class="layer open"><span class="tier">От одного до десяти миллионов</span><span class="who">Почти никого. Особенно со стороны покупателя</span></div>
+      <div class="layer"><span class="tier">Ниже полумиллиона</span><span class="who">Брокеры готового бизнеса, доски объявлений — плотно занято</span></div>
     </div>
-    <p>Причина разрыва не в том, что сделок мало. Она в экономике консультантов: сделка на три миллиона приносит слишком мало, чтобы её взял Colliers, и слишком много возни для брокера, торгующего кафе. Отели на десять-шестьдесят номеров и сельские дома в их выборки просто не попадают — статистически они не существуют.</p>
-    <div class="pull"><p>Свободна не «сельская недвижимость» и не «отели». Свободна прослойка: операционный актив за один–десять миллионов, проданный как бизнес вместе с недвижимостью.</p></div>
-    <p class="footnote">Большим невыгодно по экономике сделки. Местным агентствам по масиям — нечем: они продают недвижимость и не владеют языком прибыли, нормализации отчётности и лицензионного анализа.</p>
+    <div class="cols c3">
+      <div><h3>Предложение заморожено</h3><p>Спрос на испанские кемпинги за десять лет вырос больше чем наполовину, число мест — примерно на два процента. Новые лицензии почти не выдаются, поэтому <strong>действующая лицензия и есть значительная часть цены.</strong></p></div>
+      <div><h3>Владельцы уходят</h3><p>Испания проходит крупнейшую волну предпринимательских пенсий в своей истории. Одна семейная компания из трёх переживает второе поколение, около семидесяти процентов не имеют плана преемственности.</p></div>
+      <div><h3>Есть кому продать потом</h3><p>Фонды консолидируют сектор и контролируют пока около двенадцати процентов рынка. У объекта, доведённого до ума, через пять-семь лет есть выходной покупатель.</p></div>
+    </div>
+    <div class="pull"><p>Рынок подходит для входа — но со стороны предложения, а не спроса. Тот, кто контролирует поток объектов, контролирует сделку.</p></div>
+    <p class="footnote">Отсюда практический вывод, который переворачивает первый год: это не реклама для покупателей, а обход владельцев и сеть из гесторий, нотариусов и отраслевых ассоциаций.</p>
   </div>
 </section>
 
-<!-- 7 -->
-<section class="slide" data-part="II" data-name="Рынок">
+<section class="slide" data-part="06" data-name="Покупатели">
   <div class="wrap">
-    <p class="eyebrow">Часть II · Рынок</p>
-    <h2>Сдавать в аренду или управлять — это две разные профессии</h2>
-    <div class="cols c2">
-      <div>
-        <h3>Пассивный объект</h3>
-        <p>Помещение, офис, склад, дом под аренду. Оценивают по арендному потоку. Оценивается контракт: кто арендатор, на сколько лет, как индексируется плата. Ушёл арендатор — объект стоит примерно столько же, меняется только простой.</p>
-      </div>
-      <div>
-        <h3>Операционный актив</h3>
-        <p>Отель, кемпинг, масия. Оценивают по прибыли бизнеса. Оценивается способность конкретной команды делать поток: загрузка, тариф, сезонность, доля прямых броней, фонд оплаты труда, состояние крыши.</p>
-      </div>
-    </div>
-    <div class="card risk" style="margin-top:clamp(20px,3vh,32px)">
-      <h3>Правило, без которого покупателя разденут</h3>
-      <p>Продавец операционного актива почти всегда показывает прибыль оптимистично. Нормализация — вычет реальной зарплаты управляющего, отложенного ремонта и неоплаченного семейного труда — обычно снимает от пятнадцати до тридцати процентов заявленной прибыли. При обычном для сектора мультипликаторе завышение прибыли на пятьдесят тысяч превращается в триста-четыреста тысяч лишних в цене.</p>
-      <p><strong>Именно здесь советник отрабатывает свой гонорар целиком. И именно этого не умеет тот, кто продаёт недвижимость.</strong></p>
-    </div>
-  </div>
-</section>
-
-<!-- 8 -->
-<section class="slide" data-part="II" data-name="Рынок">
-  <div class="wrap">
-    <p class="eyebrow">Часть II · Рынок</p>
-    <h2>Почему кемпинг — лучший класс</h2>
-    <ol class="steps">
-      <li><strong>Лестница стоимости видна невооружённым глазом.</strong> Голая площадка под палатку, бунгало и премиальный домик отличаются по выручке с места в разы. Переоборудование создаёт стоимости в два-четыре раза больше вложенных денег — при одном условии: разрешительная база должна позволять ставить стационарные конструкции. Проверка этого условия и есть работа советника.</li>
-      <li><strong>Лицензия — сильнейший барьер из всех классов.</strong> Новый кемпинг в Каталонии практически не создать. Актив, который конкурент не может построить рядом, имеет встроенную защиту денежного потока. В помещениях и офисах такой защиты нет вообще.</li>
-      <li><strong>У объекта есть кому его продать через пять-семь лет.</strong> Фонды консолидируют сектор и контролируют пока около двенадцати процентов рынка — то есть покупатель на выходе уже сформирован.</li>
-    </ol>
-    <div class="cols c2" style="margin-top:clamp(22px,3vh,32px)">
-      <div class="card accent">
-        <h3>Ядро — семьдесят процентов усилий</h3>
-        <p>Лицензированные операционные активы от двух до восьми миллионов в Жироне и на Коста-Браве: кемпинги и малые отели. Комиссия защищена компетенцией, а не доступом к объявлению.</p>
-      </div>
-      <div class="card">
-        <h3>Обод — тридцать процентов</h3>
-        <p>Масии и сельские комплексы с туристическим потенциалом. Это входной поток иностранцев, до которых вы реально дотягиваетесь, и естественная воронка в ядро.</p>
-      </div>
-    </div>
-    <p class="footnote">Чего избегать: офисов и жилых зданий — регуляторное давление без премии при плотной конкуренции. И глэмпинга как самостоятельной специализации — только как способ поднять доходность существующего кемпинга.</p>
-  </div>
-</section>
-
-<!-- 9 -->
-<section class="slide" data-part="III" data-name="Покупатель">
-  <div class="wrap">
-    <p class="eyebrow">Часть III · Покупатель</p>
+    <p class="eyebrow">06 · Кто покупатели</p>
     <h2>Про голландцев надо сказать честно</h2>
-    <p>Стратегия строилась на том, что голландцы и бельгийцы предпенсионного возраста покупают кемпинги и масии в горной Каталонии. Проверка дала неудобный результат.</p>
     <div class="cols c2">
-      <div class="card">
-        <h3>Что подтвердилось</h3>
-        <p>Спрос голландцев и бельгийцев на испанскую недвижимость реален и растёт двузначными темпами. Голландцы впервые вышли на первое место среди покупателей-нерезидентов, бельгийцы — в первой четвёрке.</p>
-      </div>
-      <div class="card risk">
-        <h3>Что не подтвердилось</h3>
-        <p>География. Их ядро — Коста-Бланка и Аликанте, не Каталония. А голландская традиция покупать кемпинг как бизнес — французская: тысячи голландцев ежегодно открывают дело во Франции, и они дают почти половину иностранных ночёвок во французских кемпингах.</p>
-      </div>
+      <div class="card"><h3>Что подтвердилось</h3><p>Спрос голландцев и бельгийцев на испанскую недвижимость реален и растёт двузначными темпами. Голландцы впервые вышли на первое место среди покупателей-нерезидентов.</p></div>
+      <div class="card risk"><h3>Что не подтвердилось</h3><p>География. Их ядро — Коста-Бланка, не Каталония. А голландская традиция покупать кемпинг как бизнес — французская: тысячи голландцев ежегодно открывают дело во Франции.</p></div>
     </div>
     <div class="pull"><p>Пересечения «голландец × кемпинг × горная Каталония» в данных нет вообще. Это не «спроса нет» — это сегмент, который никем не измерен.</p></div>
-    <p>Строить на нём предложение можно. Строить прогноз — нельзя. И замер стоит около тысячи евро и трёх недель, а не квартала.</p>
-  </div>
-</section>
-
-<!-- 10 -->
-<section class="slide" data-part="III" data-name="Покупатель">
-  <div class="wrap">
-    <p class="eyebrow">Часть III · Покупатель</p>
-    <h2>Два факта, которые меняют язык компании</h2>
     <div class="stats">
-      <div class="stat"><b>35%</b><span>нерезидентов, покупающих в Каталонии, — французы. Жирона в трёх часах от Тулузы. В коммерции их не обслуживает никто</span></div>
-      <div class="stat"><b>8 из 10</b><span>иностранцев, покупающих жильё в Каталонии, уже живут в Испании. Это не «покупатели из-за границы», а соседи, которые снимали и решили купить</span></div>
+      <div class="stat"><b>35%</b><span>нерезидентов Каталонии — французы. Жирона в трёх часах от Тулузы, и в коммерции их не обслуживает никто</span></div>
+      <div class="stat"><b>8 из 10</b><span>иностранцев, покупающих здесь жильё, уже живут в Испании. Это не «покупатели из-за границы», а соседи</span></div>
     </div>
-    <p>Логика географии почти не меняется годами: французы едут по земле, немцы летят на Балеары, скандинавы и британцы — туда, где зимой тепло, американцы едут в город. Скандинавы платят за метр больше всех — но их мало и они не здесь.</p>
-    <div class="card risk">
-      <h3>Ограничение, которое важнее всей этой таблицы</h3>
-      <p>Официальная статистика по национальностям покрывает <strong>только жильё</strong>. Национальности покупателя кемпинга, отеля или помещения в публичных данных не существует как показателя. Любое утверждение «такие-то покупают у нас коммерцию» — гипотеза, чья бы она ни была. Единственный способ узнать — собственная воронка и собственная выборка из реестра.</p>
-    </div>
+    <p class="footnote">И ограничение, которое важнее любой таблицы по национальностям: официальная статистика покрывает только жильё. Национальности покупателя кемпинга или отеля в публичных данных не существует как показателя. Замер голландской гипотезы стоит около тысячи евро и трёх недель — это дешевле, чем строить на ней год.</p>
   </div>
 </section>
 
-<!-- 11 -->
-<section class="slide" data-part="III" data-name="Покупатель">
+<section class="slide" data-part="07" data-name="Конкуренты">
   <div class="wrap">
-    <p class="eyebrow">Часть III · Покупатель</p>
-    <h2>Он говорит «доходность», а покупает вторую жизнь</h2>
-    <p>Это не «инвестор». Это человек, у которого уже есть деньги и который боится их потерять сильнее, чем хочет приумножить. Поиск почти всегда начинается с бытового события: продал бизнес, умер родитель, дети уехали, юбилей, выгорание.</p>
-    <div class="pull"><p>Доходность здесь — чаще язык оправдания, чем цель. Цифры нужны не чтобы убедить покупателя, а чтобы он смог защитить решение перед женой, детьми и партнёрами.</p></div>
-    <h3 style="margin-top:clamp(20px,3vh,30px)">И решает не он один</h3>
-    <div class="cols c2">
-      <div>
-        <ul class="plain">
-          <li><strong>Инициатор</strong> — тот из супругов, у кого было событие.</li>
-          <li><strong>Вето</strong> — второй супруг. Его страх не про деньги, а про одиночество и оторванность от внуков. Не адресуете напрямую — сделка тихо умрёт.</li>
-        </ul>
-      </div>
-      <div>
-        <ul class="plain">
-          <li><strong>Налоговый советник</strong> объекта не выбирает, но выдаёт разрешение.</li>
-          <li><strong>Взрослые дети</strong> задают единственный вопрос: а что с этим потом делать нам.</li>
-        </ul>
-      </div>
-    </div>
-    <p class="footnote">Доверие в трансграничной сделке строится не обаянием, а предсказуемостью. Убивают его искусственная срочность, умолчание о недостатке и медленный ответ. Создаёт — привычка первым назвать плохую новость.</p>
-  </div>
-</section>
-
-<!-- 12 -->
-<section class="slide" data-part="III" data-name="Покупатель">
-  <div class="wrap">
-    <p class="eyebrow">Часть III · Покупатель</p>
-    <h2>Дефицитен не покупатель. Дефицитен объект</h2>
-    <p>Спрос на испанские кемпинги за десять лет вырос больше чем наполовину, а число мест — примерно на два процента. Новые лицензии почти не выдаются, поэтому действующая лицензия и есть значительная часть цены объекта.</p>
-    <p>При этом Испания проходит крупнейшую волну предпринимательских пенсий в своей истории. Только одна семейная компания из трёх переживает второе поколение, около семидесяти процентов не имеют никакого плана преемственности. В сельском туризме владельцы старше шестидесяти уходят без замены: дети сделали карьеру в других отраслях.</p>
-    <div class="pull"><p>Рынок подходит для входа — но со стороны предложения, а не спроса. Тот, кто контролирует поток объектов, контролирует сделку.</p></div>
-    <p><strong>Практический вывод, который переворачивает первый год:</strong> первые месяцы — это не реклама для покупателей, а обход владельцев и сеть из гесторий, нотариусов и отраслевых ассоциаций.</p>
-  </div>
-</section>
-
-<!-- 13 -->
-<section class="slide" data-part="IV" data-name="Конкуренты">
-  <div class="wrap">
-    <p class="eyebrow">Часть IV · Конкуренты</p>
+    <p class="eyebrow">07 · Конкуренты и свободное место</p>
     <h2>Ниша не пустая. Она недообслуженная</h2>
     <div class="cols c3">
-      <div class="card risk">
-        <h3>ACSI Broker Services</h3>
-        <p>Голландский бренд с шестидесятилетней историей в кемпинге. Запустил общеевропейскую площадку по продаже и покупке кемпингов, включая закрытые сделки под соглашение о неразглашении. За Южной Европой закреплён отдельный брокер.</p>
-        <p class="sub">Это прямой заход в сюжет «голландец покупает кемпинг в Испании».</p>
-      </div>
-      <div class="card risk">
-        <h3>GG Real Estate</h3>
-        <p>Русскоязычное агентство в Барселоне. Уже делает отельные сделки на стороне покупателя: закрытая база, расчёт экономики объекта, проверка лицензий, управление после сделки.</p>
-        <p class="sub">Самый опасный: это ровно та позиция, на которую вы целитесь.</p>
-      </div>
-      <div class="card">
-        <h3>Concerto</h3>
-        <p>Больше сорока объектов в Испании, выделенный специалист по стране, отдельный раздел для покупателей.</p>
-      </div>
-      <div class="card">
-        <h3>Lucas Fox</h3>
-        <p>Куплен итальянской группой в начале прошлого года, объявил выход в коммерцию и гостиничный сегмент и рост до четырёхсот человек.</p>
-      </div>
-      <div class="card">
-        <h3>Carlton, The Hotell</h3>
-        <p>Показывают выручку и прибыль прямо в карточке объекта. Работают с закрытым контуром.</p>
-      </div>
-      <div class="card accent">
-        <h3>Christie &amp; Co, Colliers, CBRE</h3>
-        <p>Не конкуренты. Источник объектов ниже их порога — и покупателей, которые до их порога ещё не доросли.</p>
-      </div>
+      <div class="card risk"><h3>ACSI Broker Services</h3><p>Голландский бренд с шестидесятилетней историей в кемпинге. Общеевропейская площадка, работает и на продавца, и на покупателя. За Южной Европой закреплён отдельный брокер.</p></div>
+      <div class="card risk"><h3>GG Real Estate</h3><p>Русскоязычное агентство в Барселоне. Уже делает отельные сделки на стороне покупателя: закрытая база, расчёт экономики, проверка лицензий. <strong>Ровно ваша целевая позиция.</strong></p></div>
+      <div class="card"><h3>Concerto, Carlton, Lucas Fox</h3><p>Сорок с лишним объектов в Испании. Выручка и прибыль прямо в карточке объекта. Lucas Fox куплен итальянской группой и объявил выход в гостиничный сегмент.</p></div>
     </div>
-    <div class="pull"><p>Окно есть, но оно не бесконечное. Позицию надо строить не на «там никого нет», а на признаке, который конкуренты не могут повторить.</p></div>
-  </div>
-</section>
-
-<!-- 14 -->
-<section class="slide" data-part="IV" data-name="Конкуренты">
-  <div class="wrap">
-    <p class="eyebrow">Часть IV · Конкуренты</p>
-    <h2 class="wide">Пять вещей, которые в этом сегменте есть у всех</h2>
-    <div class="tablewrap">
-      <table>
-        <thead><tr><th>Что</th><th>У кого</th><th>Сейчас у нас</th></tr></thead>
-        <tbody>
-          <tr><td><b>От четырёх до одиннадцати языков</b></td><td>Lucas Fox — десять, Sotheby's — восемь, Rusol Prime — больше десяти</td><td class="now">только русский</td></tr>
-          <tr><td><b>Отдельная страница под каждый тип актива и географию</b></td><td>все шесть нишевых игроков</td><td class="now">одна страница на всё</td></tr>
-          <tr><td><b>Экономика объекта в карточке</b></td><td>Carlton — выручка и прибыль; GG — загрузка, тариф, доход на номер</td><td class="now">фото и цена</td></tr>
-          <tr><td><b>Закрытый контур: тизер → соглашение → полный меморандум</b></td><td>ACSI, The Hotell, Carlton</td><td class="now">нет</td></tr>
-          <tr><td><b>Собственная аналитика как продукт</b></td><td>Christie &amp; Co, Lucas Fox</td><td class="now">нет</td></tr>
-        </tbody>
-      </table>
-    </div>
-    <h3>А это есть у нас — и этого нет у них</h3>
-    <ul class="plain">
-      <li><strong>Подробный разбор механики испанской сделки</strong> — задаток, справка о пригодности, техническая инспекция здания, номер иностранца, покупка по доверенности, ипотека нерезиденту. У нишевых конкурентов такого блока не видно.</li>
-      <li><strong>Юристы в команде, показанные публично.</strong> У ACSI, Concerto и The Hotell на сайте брокеры, а не юристы.</li>
-      <li><strong>Жизнь владельца после сделки</strong> — вид на жительство, счета, налоги, медицина. Ни один нишевый сайт этого не предлагает вообще.</li>
-      <li><strong>Витрина уже в целевом чеке</strong> — четыре объекта из пяти дороже миллиона. Продукт опережает упаковку.</li>
-    </ul>
-    <p class="footnote">И деталь, которая работает в обе стороны: примеров сделок с цифрами нет ни у кого — ни у конкурентов, ни у нас. Поле пустое для всех одновременно.</p>
-  </div>
-</section>
-
-<!-- 15 -->
-<section class="slide" data-part="IV" data-name="Конкуренты">
-  <div class="wrap">
-    <p class="eyebrow">Часть IV · Конкуренты</p>
-    <h2>Четыре места, где не стоит никто</h2>
-    <ol class="steps">
-      <li><strong>Связка «доходный актив плюс жизнь владельца в Испании».</strong> Все нишевые сайты — брокеры актива и только. Ни на одном рядом с объектом нет лицензий, вида на жительство, налогов нерезидента, ипотеки. У вас это уже есть — просто лежит не на той полке.</li>
-      <li><strong>Платный входной продукт в чеке от миллиона.</strong> Внизу рынка есть пакеты по жилью, наверху — консалтинг вообще без цены. Между ними пусто.</li>
-      <li><strong>Сквозная цепочка «купил → лицензировал → запустил → получаю отчётность».</strong> Сегодня сделку, лицензию и управление продают три разные компании.</li>
-      <li><strong>Обещание проверить право актива работать дальше.</strong> Около половины каталонских кемпингов затронуты паводковой проверкой — и никто на этом не строит позицию.</li>
-    </ol>
-    <div class="pull"><p>И не построит. Тот, кто получает деньги от продавца, физически не может продавать сомнение.</p></div>
-  </div>
-</section>
-
-<!-- 16 -->
-<section class="slide" data-part="V" data-name="Позиция">
-  <div class="wrap">
-    <p class="eyebrow">Часть V · Позиция</p>
-    <h2 class="wide">Три разрыва между тем, что вы говорите, и тем, куда идёте</h2>
-    <ol class="steps">
-      <li><strong>Язык.</strong> Сайт, контент и бренд — на русском, для русскоязычных. Целевой покупатель и целевой продавец — каталонская семья с кемпингом — не могут прочитать ни одного вашего материала. Две из трёх сторон будущей сделки вне досягаемости.</li>
-      <li><strong>Доказательства.</strong> «Стратегический советник по капиталу» — заявка без единой публично описанной закрытой сделки. Витрина объектов — это не история сделок. Причём кейсов с цифрами нет и у конкурентов: кто опубликует первым, тот и заберёт.</li>
-      <li><strong>Юридическая иллюзия.</strong> Тезис «коммерция не несёт юридических проблем» эксперты назвали опасным заблуждением единогласно. Всё ровно наоборот: сделки с отелями и кемпингами тяжелее жилья — лицензии деятельности, туристические разрешения, статус земли, переход персонала, долги компании-владельца.</li>
-    </ol>
-    <div class="card risk" style="margin-top:clamp(20px,3vh,30px)">
-      <p>И отдельно про масию с проектом кемпинга: <strong>план — это ожидание, а не актив.</strong> От плана до лицензии в Каталонии годы согласований, и большинство планов умирает в мэрии. Это первое, что надо превратить в факт или честно переоценить.</p>
-    </div>
-  </div>
-</section>
-
-<!-- 17 -->
-<section class="slide" data-part="V" data-name="Позиция">
-  <div class="wrap">
-    <p class="eyebrow">Часть V · Позиция</p>
-    <h2>Позиция, которую я предлагаю занять</h2>
-    <div class="pull" style="margin-top:0">
-      <p>Мы работаем только на покупателя и начинаем не с объекта, а с проверки его права работать дальше — лицензия, вода, паводок, пожарная полоса. До того, как вы назовёте цену. Кемпинги, масии и малые отели Каталонии.</p>
-    </div>
-    <p class="lead">Короче: покупательский советник по операционным активам Каталонии. Мы чаще отговариваем, чем продаём.</p>
-    <div class="tablewrap">
-      <table>
-        <thead><tr><th>Мог бы так сказать конкурент?</th><th></th><th>Почему</th></tr></thead>
-        <tbody>
-          <tr><td><b>Concerto, Carlton, ACSI</b></td><td class="yes">Нет</td><td>Их деньги на стороне продавца. Обещание сомнения разрушает их экономику</td></tr>
-          <tr><td><b>Christie &amp; Co</b></td><td class="yes">Технически да</td><td>Экономически нет: этот чек вне их выборки</td></tr>
-          <tr><td><b>GG Real Estate</b></td><td class="now">Да</td><td>Единственный, кто проходит тест</td></tr>
-        </tbody>
-      </table>
-    </div>
-    <p>Значит, позицию надо сузить ровно до того, что разводит вас с ними: <strong>класс актива</strong> — кемпинг и масия против городского отеля, <strong>география</strong> — горная и внутренняя Каталония против Барселоны, и <strong>лицензионно-паводковый риск как первый шаг</strong>, а не как строчка в договоре.</p>
-  </div>
-</section>
-
-<!-- 18 -->
-<section class="slide" data-part="V" data-name="Позиция">
-  <div class="wrap">
-    <p class="eyebrow">Часть V · Позиция</p>
-    <h2>Защищает не формулировка, а архив</h2>
-    <div class="tablewrap">
-      <table>
-        <thead><tr><th>Срок</th><th>Что успеют скопировать</th></tr></thead>
-        <tbody>
-          <tr><td><b>За месяц</b></td><td>Слова «работаем только на покупателя» и страницу про паводковый риск. Декрет публичный, чек-лист тоже</td></tr>
-          <tr><td><b>За полгода</b></td><td>Сделают из чек-листа платную услугу, наймут юриста и менеджера с нужным языком</td></tr>
-          <tr><td><b>За год</b></td><td>ACSI может добавить каталонское направление на стороне покупателя. Но её деньги остаются на стороне продавца</td></tr>
-          <tr><td><b>Годы и дорого</b></td><td><b>Собственная база сделок в этом чеке. Репутация того, кто отговаривает. Отношения с владельцами и мэриями. Архив отказов</b></td></tr>
-        </tbody>
-      </table>
-    </div>
-    <div class="pull"><p>Единственное, что нельзя скопировать, — архив объектов, от которых вы отговорили, с цифрами и причинами. Он не копируется, потому что требует не данных, а готовности публично сказать «нет».</p></div>
-    <p class="footnote">«Кемпинг на восемьдесят мест, девять процентов доходности на бумаге. Почему не рекомендовали: зона затопления, стационарные конструкции ставить нельзя, вся модернизация закрыта». Три таких разбора стоят дороже любого сайта.</p>
-  </div>
-</section>
-
-<!-- 19 -->
-<section class="slide" data-part="V" data-name="Позиция">
-  <div class="wrap">
-    <p class="eyebrow">Часть V · Позиция</p>
-    <h2>Два сегмента — но не под одним именем</h2>
-    <p>Два направления можно держать в одном юридическом лице, но не под одним брендом и не одним лицом. Отдельное имя, отдельный сайт и отдельные материалы для инвестиционного направления. Ваш личный бренд уходит в инвестиции, массовое жильё остаётся на менеджере. Страхование не соседствует с инвестиционным предложением ни на одной странице.</p>
-    <div class="pull"><p>Компромисс «одна вывеска, две вкладки» экономит несколько тысяч евро и стоит доступа в сегмент.</p></div>
-    <p>Причина простая: владелец капитала ищет узкой компетенции и независимости. Страхование плюс квартиры плюс инвестиции под одной вывеской читается как «берём всё, что дают».</p>
-    <p class="footnote">То же и с витриной чужих объектов на сайте: заявить «работаем только на покупателя» и одновременно показывать пять листингов нельзя. Владелец кемпинга, увидев листинги, понимает, что вы продавец, и закрывается.</p>
-  </div>
-</section>
-
-<!-- 20 -->
-<section class="slide" data-part="VI" data-name="План">
-  <div class="wrap">
-    <p class="eyebrow">Часть VI · План</p>
-    <h2>Во что мы вписываемся — честный календарь</h2>
-    <p>В этой профессии продают не показ объектов, а решение <strong>не покупать</strong>, и только в самом конце — решение купить. Клиент платит за отсев. Порядок величин по одному поручению: около пятидесяти объектов отобрано на бумаге, восемь-двенадцать выездов на место, две-три оферты, одна сделка.</p>
-    <div class="cols c3" style="margin-top:clamp(18px,2.6vh,28px)">
-      <div class="card">
-        <h3>Как устроены деньги</h3>
-        <p>Оплата за работу поиска — она не возвращается при срыве и засчитывается в итог. Плюс гонорар за результат при закрытии.</p>
-        <p><strong>Проверку объекта оплачивает клиент напрямую подрядчикам.</strong> Авансировать её из своего кармана нельзя ни при каких обстоятельствах: при срыве эти деньги не возвращаются никому.</p>
-      </div>
-      <div class="card">
-        <h3>Когда придут деньги</h3>
-        <p>Первые оплаты — на четвёртом-шестом месяце. Первый гонорар за результат — реалистично на десятом-четырнадцатом.</p>
-        <p><strong>Планировать нужно оборотный капитал на год-полтора.</strong> Одна сделка почти наверняка развалится на проверке — это норма, а не провал.</p>
-      </div>
-      <div class="card">
-        <h3>Потолок одного человека</h3>
-        <p>Три-пять активных поручений одновременно, две-четыре закрытые сделки в год. Потолок упирается не в поток клиентов, а в качество отсева: сверх пяти поручений проверка начинает страдать.</p>
-      </div>
-    </div>
-    <p class="footnote">Вход в профессию: реестр агентов Каталонии, страхование ответственности и финансовая гарантия, договорный пакет, протокол по отмыванию. Порядок — несколько тысяч евро и два-четыре месяца, узкое место — обучение, если нет профильного диплома. Отдельно: рынок в этом чеке ждёт лимита ответственности выше законного минимума — разница в цене полиса невелика, разница в переговорной позиции существенная.</p>
-  </div>
-</section>
-
-<!-- 21 -->
-<section class="slide" data-part="VI" data-name="План">
-  <div class="wrap">
-    <p class="eyebrow">Часть VI · План</p>
-    <h2>Стратегия стоит на трёх недоказанных опорах</h2>
-    <ol class="steps">
-      <li>Спрос существует <strong>и досягаем именно для вас</strong>.</li>
-      <li>Вы способны закрывать сделки в этом чеке, <strong>не имея за спиной ни одной</strong>.</li>
-      <li>Коммерция <strong>юридически проходима</strong>.</li>
-    </ol>
-    <p style="margin-top:clamp(18px,2.6vh,26px)">Все три проверяются за один квартал малыми деньгами. Пока они не проверены, любой бюджет на маркетинг — это ставка, а не решение.</p>
-    <div class="card accent" style="margin-top:clamp(18px,2.6vh,26px)">
-      <h3>И главное правило всего перехода</h3>
-      <p style="font-family:var(--f-display);font-size:clamp(18px,1.8vw,24px);line-height:1.4;color:var(--ink)">Старая модель — это мост, а не балласт.</p>
-      <p>Жильё и страхование — венчурный фонд вашего перехода. Они дают деньги с циклом два-четыре месяца, пока новое направление не приносит ничего. Резать их до первой закрытой сделки нельзя. Правильный ход — не избавиться от них, а снять с себя роль основного исполнителя.</p>
-      <p><strong>Правило отсечения:</strong> направление режется только тогда, когда инвестиционное за последние полгода дало маржи больше, чем оно само за год.</p>
-    </div>
-  </div>
-</section>
-
-<!-- 22 -->
-<section class="slide" data-part="VI" data-name="План">
-  <div class="wrap">
-    <p class="eyebrow">Фаза первая · месяцы 0–3</p>
-    <h2>Правда и фундамент</h2>
-    <ul class="plain">
-      <li><strong>Посчитать реальную выручку, маржу и свои часы</strong> по каждому направлению за год — и смоделировать деньги на восемнадцать месяцев вперёд при нуле крупных сделок. До этого не решать, что резать.</li>
-      <li><strong>Комплаенс раньше маркетинга.</strong> Реестр агентов Каталонии, страхование ответственности и финансовая гарантия, письменный протокол по отмыванию, ревизия обещаний про вид на жительство на сайте. Разработке это не мешает — это блокирует запуск на живых людях.</li>
-      <li><strong>Снять с сайта витрину чужих объектов</strong> или юридически развести бренды. Это гейт: без него следующий месяц не начинается.</li>
-      <li><strong>Английская версия сайта и открытая модель гонорара</strong> — сколько стоит и кто платит.</li>
-      <li><strong>Составить список ста двадцати владельцев</strong> для первой волны обхода. Список конечен и известен: триста пятьдесят семь кемпингов плюс масии целевых комарок.</li>
-      <li><strong>Замерить голландскую гипотезу дёшево</strong> — посадочная страница на нидерландском и английском примерно за тысячу евро плюс пятнадцать разговоров с реальными покупателями и брокерами.</li>
-    </ul>
-    <p class="gate"><b>Гейт:</b> деньги посчитаны · документы поданы · витрина снята · пятнадцать разговоров проведено · стоимость одного качественного обращения известна · проект кемпинга на масии превращён в факт или объект честно переоценён.</p>
-  </div>
-</section>
-
-<!-- 23 -->
-<section class="slide" data-part="VI" data-name="План">
-  <div class="wrap">
-    <p class="eyebrow">Фаза вторая · месяцы 4–9</p>
-    <h2>Первая референсная сделка</h2>
-    <ul class="plain">
-      <li><strong>Три-пять поручений</strong> на малые отели, хостали и кемпинги — через юристов, нотариусов и гесторов, а не через соцсети.</li>
-      <li><strong>Одна сделка на стороне покупателя доведена до задатка</strong>, вместе с внешним советником по слияниям — ради подписи под документом. Первая закрытая сделка важнее её маржи.</li>
-      <li><strong>Реестр «право работать».</strong> Объекты целевых комарок проверены по паводковому декрету, зоне стока, пожарной полосе, воде и лицензиям. Один этот массив даёт сразу три вещи: платный продукт, повод для разговора с владельцем и доказательство компетенции при нулевой истории сделок.</li>
-      <li><strong>Экспресс-проверка объекта, который клиент нашёл сам</strong> — как платный продукт за несколько дней. Аналога в нише нет. Это лучшая входная точка, когда истории сделок ещё нет: риск для клиента низкий, демонстрация компетенции максимальная.</li>
-      <li><strong>Публиковать разборы объектов, от которых отговорили.</strong></li>
-    </ul>
-    <p class="gate"><b>Гейт:</b> три подписанных поручения · одна сделка доведена до задатка · есть первые оплаты за экспресс-проверку · все активные сделки и контакты лежат в системе, а не в переписке.</p>
-  </div>
-</section>
-
-<!-- 24 -->
-<section class="slide" data-part="VI" data-name="План">
-  <div class="wrap">
-    <p class="eyebrow">Фазы третья и четвёртая · месяцы 10–24</p>
-    <h2>Повторяемость, потом отсечение</h2>
+    <h3 style="margin-top:clamp(18px,2.6vh,28px)">Четыре места, где не стоит никто</h3>
     <div class="cols c2">
-      <div>
-        <h3>Месяцы 10–18</h3>
-        <ul class="plain">
-          <li><strong>Реферальная сеть:</strong> юристы, нотариусы, частные банкиры, налоговые советники в странах покупателей. Главная валюта здесь не комиссия, а обратный поток — каждому вашему голландскому покупателю нужна декларация на родине.</li>
-          <li><strong>Наём человека номер два</strong> — аналитика и менеджера сделок с испанским и каталанским. Единственное лекарство от того, что сегодня весь бизнес держится на вас одной.</li>
-          <li><strong>Три примера сделок с цифрами</strong> и первый короткий обзор рынка по своему сегменту, раз в полгода.</li>
-        </ul>
-      </div>
-      <div>
-        <h3>Месяцы 19–24</h3>
-        <ul class="plain">
-          <li><strong>Отсечение нецелевого</strong> — по правилу отсечения, не по календарю.</li>
-          <li><strong>Французский вход.</strong> Французы — треть нерезидентов Каталонии и никем не обслужены в коммерции.</li>
-          <li><strong>Собственная база сделок в этом чеке.</strong> Через два года это единственное, что нельзя скопировать: институциональной статистики по сегменту не существует, и её не будет.</li>
-        </ul>
-      </div>
+      <div><ul class="plain">
+        <li><strong>Связка «доходный актив плюс жизнь владельца в Испании».</strong> Все нишевые игроки — брокеры актива и только: ни лицензий, ни вида на жительство, ни налогов рядом с объектом.</li>
+        <li><strong>Платный входной продукт в этом чеке.</strong> Внизу рынка есть пакеты по жилью, наверху — консалтинг без цены. Между ними пусто.</li>
+      </ul></div>
+      <div><ul class="plain">
+        <li><strong>Сквозная цепочка «купил → лицензировал → запустил → получаю отчётность».</strong> Сегодня это три разные компании.</li>
+        <li><strong>Обещание проверить право актива работать дальше.</strong> Около половины каталонских кемпингов затронуты паводковой проверкой — и никто на этом не строит позицию.</li>
+      </ul></div>
     </div>
-    <p class="gate"><b>Гейт третьей фазы:</b> три закрытые целевые сделки, из них минимум одна коммерческая · минимум две — <b>не из вашей личной сети</b> · человек номер два нанят.</p>
+    <div class="pull"><p>И не построит: тот, кто получает деньги от продавца, физически не может продавать сомнение. Это и есть признак, который конкурент не может повторить.</p></div>
   </div>
 </section>
 
-<!-- 25 -->
-<section class="slide" data-part="VI" data-name="План">
+<section class="slide" data-part="08" data-name="Стоит ли">
   <div class="wrap">
-    <p class="eyebrow">Часть VI · План</p>
-    <h2>Откуда деньги, пока новое не приносит</h2>
+    <p class="eyebrow">08 · Имеет ли смысл туда идти</p>
+    <h2>Да — но с открытыми глазами</h2>
     <div class="cols c3">
+      <div class="card accent">
+        <h3>За</h3>
+        <ul class="plain">
+          <li>Свободная прослойка между большими консультантами и продавцами готового бизнеса</li>
+          <li>Доход со сделки выше в три-пять раз при сопоставимых часах</li>
+          <li>Жилищное регулирование сюда не дотягивается</li>
+          <li>Клиент возвращается: между покупками нужны управление, переоценка, выход</li>
+          <li>Лицензионный барьер защищает сам актив — конкурент не построит такой рядом</li>
+        </ul>
+      </div>
       <div class="card risk">
-        <h3>Аренда — закрыта арифметикой</h3>
-        <p>Комиссию с жильца брать нельзя, предложение упало почти втрое, а привести клиента дороже, чем он приносит. В этой воронке нет платящей стороны.</p>
-        <p><strong>Ни бюджета, ни посадочной страницы.</strong> Остаётся работа с собственниками — там платящая сторона на конце воронки.</p>
+        <h3>Риски</h3>
+        <ul class="plain dash">
+          <li><strong>Кассовый разрыв.</strong> Первый гонорар за результат — на десятом-четырнадцатом месяце. Отрезать текущий доход раньше нельзя</li>
+          <li><strong>Замкнутый круг.</strong> Нет истории сделок → нет поручения → нет истории сделок</li>
+          <li><strong>Юридическая тяжесть.</strong> Тезис «в коммерции нет юридических проблем» — опасное заблуждение, всё ровно наоборот</li>
+          <li><strong>Всё держится на одном человеке</strong></li>
+        </ul>
       </div>
       <div class="card">
-        <h3>Страхование — плохой товар, отличная вторая продажа</h3>
-        <p>Привести клиента на полис рекламой стоит в несколько раз дороже, чем полис приносит за первый год. Но человеку, оформляющему вид на жительство, полис нужен <strong>по закону</strong> — и тогда привлечение стоит ноль.</p>
-        <p>Продление платит почти столько же, сколько первая продажа. Через несколько лет такой портфель стоит сам по себе.</p>
+        <h3>Не подтверждено</h3>
+        <ul class="plain dash">
+          <li>Спрос существует <strong>и досягаем именно для вас</strong></li>
+          <li>Вы способны закрывать сделки в этом чеке, не имея за спиной ни одной</li>
+          <li>Коммерция юридически проходима для команды такого размера</li>
+        </ul>
+        <p style="margin-top:.9em"><strong>Все три проверяются за один квартал малыми деньгами.</strong> Пока они не проверены, любой бюджет на маркетинг — ставка, а не решение.</p>
+      </div>
+    </div>
+    <div class="pull"><p>Ответ — да, если переход постепенный и текущий денежный поток сохранён. Старая модель здесь не балласт, а мост.</p></div>
+  </div>
+</section>
+
+<section class="slide" data-part="09" data-name="Бренд">
+  <div class="wrap">
+    <p class="eyebrow">09 · Архитектура бренда</p>
+    <h2>Инвестиционное направление — отдельный ресурс</h2>
+    <div class="cols c2">
+      <div>
+        <ul class="plain">
+          <li><strong>Существующий сайт остаётся как есть.</strong> Он кормит и он мост. Редизайн — не задача этого года.</li>
+          <li><strong>Инвестиционное направление получает своё имя, свой сайт и свои материалы.</strong> Английский с первого дня, нидерландский и французский — по мере проверки гипотез.</li>
+          <li><strong>Личный бренд владелицы уходит в инвестиции.</strong> Массовое жильё остаётся на менеджере.</li>
+          <li><strong>Страхование не соседствует с инвестиционным предложением</strong> ни на одной странице.</li>
+          <li><strong>Витрину чужих объектов и заявку «работаем только на покупателя»</strong> нельзя показывать одновременно. Владелец кемпинга видит листинги и понимает, что вы продавец.</li>
+        </ul>
       </div>
       <div class="card accent">
-        <h3>Релокация — единственное, где реклама окупается</h3>
-        <p>Запас примерно вдвое. Самый конвейерный продукт — виза цифрового кочевника: решение принимает один орган, срок двадцать дней, молчание считается согласием, пакет документов стандартный.</p>
-        <p>И самый дешёвый канал — не реклама, а посевы в телеграм-каналах мигрантов: один пост стоит примерно как сто кликов в поиске.</p>
+        <h3>Почему не «вкладка для инвесторов»</h3>
+        <p>Владелец капитала ищет узкой компетенции и независимости. Страхование плюс квартиры плюс инвестиции под одной вывеской читается как «берём всё, что дают».</p>
+        <p><strong>Компромисс «одна вывеска, две вкладки» экономит несколько тысяч евро и стоит доступа в сегмент.</strong></p>
+        <p>Юридическое лицо при этом может остаться одно — разводятся бренд, сайт и лицо, а не компания.</p>
       </div>
     </div>
-    <div class="pull"><p>И свободное место, которое ничего не стоит занять: в релокации никто не публикует цены. Открытый прайс на витрине там, где его не показывает никто, — самая дешёвая заявка о себе из возможных.</p></div>
-    <p class="footnote">Важно: это делается под отдельной сервисной вывеской и руками координатора, а не вашими. Ваш личный бренд не становится лицом массовой рекламы — иначе он перестаёт работать в инвестиционном сегменте.</p>
+    <p class="footnote">Что на этом ресурсе обязано быть: первый экран с одной фразой — кто, для кого, какой класс активов, какая география, от какой суммы. Форматы поручений и открытая модель гонорара. Критерии объектов, которые берутся в работу и которые не берутся. Чего там принципиально нет: каталога с фильтрами, кнопки «оставить заявку на просмотр», калькулятора ипотеки, отзывов про квартиры.</p>
   </div>
 </section>
 
-<!-- 26 -->
-<section class="slide" data-part="VI" data-name="План">
+<section class="slide" data-part="10" data-name="Авторитет">
   <div class="wrap">
-    <p class="eyebrow">Часть VI · План</p>
-    <h2>Чего не делать в первый год</h2>
-    <div class="cols c2">
-      <div>
-        <ul class="plain dash">
-          <li>Не заказывать редизайн сайта раньше, чем определена ниша.</li>
-          <li>Не закрывать жилое направление — оно платит за переход.</li>
-          <li>Не смешивать страхование с инвестиционным предложением ни на одной странице.</li>
-          <li>Не строить страховую воронку и не рекламировать полисы.</li>
-          <li>Не идти в Италию и Австрию.</li>
-        </ul>
-      </div>
-      <div>
-        <ul class="plain dash">
-          <li>Не ставить чат-ботов, квизы и «умный подбор» на клиентские страницы: при таком чеке говорят с человеком.</li>
-          <li>Не брать стенд на выставке. Первый стенд стоит квартального бюджета всего привлечения — ехать делегатом можно и нужно, платить за стенд рано.</li>
-          <li>Не нанимать под новое направление до второй закрытой сделки.</li>
-          <li>Не обещать доходность — ни устно, ни в материалах.</li>
-          <li>Не мерить первый год сделками. Первый год меряется базой, встречами и поручениями.</li>
-        </ul>
-      </div>
-    </div>
-    <p class="footnote">И про технического партнёра: узкое место компании — не программное обеспечение. Это отсутствие поручений, отсутствие публичной истории сделок и недосягаемость клиента на его языке. Каждая техническая задача должна быть привязана к одной из трёх опор — не привязана, значит не в плане. Его первая поставка — не система управления клиентами, а англо-нидерландская страница и рабочая база.</p>
-  </div>
-</section>
-
-<!-- 27 -->
-<section class="slide" data-part="VI" data-name="План">
-  <div class="wrap">
-    <p class="eyebrow">Часть VI · План</p>
-    <h2 class="wide">Как понять, что не работает — до того, как кончатся деньги</h2>
-    <div class="cols c2">
-      <div class="card">
-        <h3>Через шесть месяцев — тревога, если</h3>
-        <ul class="plain dash">
-          <li>Нет базы из полутора сотен собственников с историей контакта</li>
-          <li>Ни одной встречи с привратником — частным банкиром, налоговым советником, гестором</li>
-          <li>Ни одного полного расчёта по объекту</li>
-          <li>Ни одного входящего запроса на инвестиции</li>
-          <li>Меньше пятнадцати процентов вашего времени фактически ушло в новое направление</li>
-        </ul>
-      </div>
-      <div class="card risk">
-        <h3>Через двенадцать месяцев — стоп, если</h3>
-        <ul class="plain dash">
-          <li>Ноль поручений — даже маленьких и совместных</li>
-          <li>Ни одной повторной встречи с одним и тем же инвестором</li>
-          <li>Нишу невозможно назвать одной фразой</li>
-          <li>Доход от жилья упал, а нового нет</li>
-          <li>Вас ни разу не позвали как второе мнение по чужой сделке</li>
-        </ul>
-      </div>
-    </div>
-    <div class="pull"><p>Выход, придуманный в момент выхода, не происходит. Цифру, при которой канал закрывается, называют до его запуска, а не после.</p></div>
-  </div>
-</section>
-
-<!-- 28 -->
-<section class="slide" data-part="VII" data-name="Границы">
-  <div class="wrap">
-    <p class="eyebrow plain">Часть VII · Границы</p>
-    <h2>Что здесь может быть неверно</h2>
-    <p>Это самая полезная страница, потому что она показывает границы доверия ко всему остальному.</p>
-    <div class="cols c2">
-      <div>
-        <ul class="plain dash">
-          <li><strong>Голландская гипотеза не измерена никем.</strong> Сколько голландцев и бельгийцев владеет испанскими кемпингами — данных нет, есть только косвенные следы.</li>
-          <li><strong>Мультипликаторов по фактическим испанским сделкам с кемпингами не существует</strong> — использованы французские ориентиры, их надо калибровать по реальным сделкам.</li>
-          <li><strong>Национальности покупателя коммерческой недвижимости нет как показателя.</strong> Статистика покрывает только жильё.</li>
-        </ul>
-      </div>
-      <div>
-        <ul class="plain dash">
-          <li><strong>Конверсия обращения в сделку в этом сегменте не измерена ни одним публичным источником.</strong> Любой, кто называет вам такую цифру, её придумал.</li>
-          <li><strong>Плотность конкуренции в этом чеке нигде не измерена.</strong> Вывод о свободной нише следует из структуры рынка, а не из прямых данных.</li>
-          <li><strong>Сайты и первичные отчёты напрямую не читались</strong> — доступ был заблокирован, всё построено на поисковой выдаче.</li>
-        </ul>
-      </div>
-    </div>
-    <p class="footnote">Цены конкурентов и ставки по услугам в этом сегменте не публикуются вообще — всё, что здесь есть, это рыночные оценки. Проверяется двумя-тремя звонками, и это самый доходный час работы за весь запуск.</p>
-  </div>
-</section>
-
-<!-- 29 -->
-<section class="slide" data-part="VII" data-name="Границы">
-  <div class="wrap">
-    <p class="eyebrow plain">Часть VII · Границы</p>
-    <h2 class="wide">Семь вопросов, без ответов на которые дальше не двинуться</h2>
+    <p class="eyebrow">10 · Как строить авторитет</p>
+    <h2>Пока нет сделок, компетенцию показывает суждение</h2>
     <ol class="steps">
-      <li>Сколько сделок и на какие суммы закрыто за последние два года — и как устроена выручка по направлениям?</li>
-      <li>Как устроено вознаграждение в коммерции: кто платит, сколько, есть ли эксклюзивы?</li>
-      <li>Откуда данные о голландском и бельгийском спросе — это реальные запросы в работе или наблюдение? Сколько таких клиентов сейчас?</li>
-      <li>Какой статус у проекта кемпинга на масии: поданные документы, заключение мэрии — или идея?</li>
-      <li>Есть ли регистрация в реестре агентов, статус страхового посредника, письменный протокол по отмыванию?</li>
-      <li>На каких языках команда реально ведёт клиента до нотариуса? Кто сможет вести каталонского продавца отеля?</li>
-      <li>Где сегодня физически живут данные о клиентах и объектах?</li>
+      <li><strong>Собственная база объектов и владельцев.</strong> Институциональной статистики по этому сегменту не существует — Colliers и Christie считают сделки от нескольких миллионов. Через два года своя база будет единственным, чего нет ни у кого.</li>
+      <li><strong>Разбор объекта, от которого отговорили</strong> — с цифрами и причинами. Не копируется, потому что требует не данных, а готовности публично сказать «нет».</li>
+      <li><strong>Короткий обзор рынка по своему сегменту</strong>, раз в полгода, несколько страниц. В нише, где нет ни одного институционала, это делает вас источником.</li>
+      <li><strong>Партнёрская сеть:</strong> гестории и нотариусы (узнают о продаже за год-два до рынка), ассоциации кемпингов Жироны, каталонский рынок передачи семейного бизнеса, налоговые советники в странах покупателей. Валюта здесь не комиссия, а обратный поток.</li>
+      <li><strong>LinkedIn на английском под личным именем.</strong> Риск и мнение — на человеке, обещание и обязательство — на компании.</li>
     </ol>
-    <div class="pull"><p>Ответы на эти семь вопросов стоят дороже, чем весь остальной документ.</p></div>
-    <p class="footnote">Свод по десяти отчётам рабочей группы, август 2026. Полные тексты с источниками и разметкой достоверности — в рабочих материалах проекта.</p>
+    <div class="pull"><p>«Кемпинг на восемьдесят мест, девять процентов доходности на бумаге. Почему не рекомендовали: зона затопления, стационарные конструкции ставить нельзя, вся модернизация закрыта». Три таких разбора стоят дороже любого сайта.</p></div>
+  </div>
+</section>
+
+<section class="slide" data-part="11" data-name="Два года">
+  <div class="wrap">
+    <p class="eyebrow">11 · Двухлетняя траектория</p>
+    <h2>Четыре фазы, и каждая открывается только по факту</h2>
+    <div class="phases">
+      <div class="phase">
+        <span class="mo">Месяцы 0–3</span>
+        <h3>Правда и фундамент</h3>
+        <p>Считаем реальные деньги и часы. Подаём документы. Запускаем отдельный ресурс на английском. Замеряем голландскую гипотезу.</p>
+      </div>
+      <div class="phase">
+        <span class="mo">Месяцы 4–9</span>
+        <h3>Первая сделка</h3>
+        <p>Три-пять поручений через юристов и нотариусов. Одна сделка доведена до задатка вместе с внешним советником. Первый платный продукт.</p>
+      </div>
+      <div class="phase">
+        <span class="mo">Месяцы 10–18</span>
+        <h3>Повторяемость</h3>
+        <p>Партнёрская сеть вместо личной. Человек номер два. Первые кейсы с цифрами и первый обзор рынка.</p>
+      </div>
+      <div class="phase">
+        <span class="mo">Месяцы 19–24</span>
+        <h3>Отсечение</h3>
+        <p>Режем нецелевое по правилу. Французский вход. Собственная база рынка как актив компании.</p>
+      </div>
+    </div>
+    <div class="cols c2">
+      <div>
+        <h3>Гейты — то, без чего следующая фаза не начинается</h3>
+        <ul class="plain">
+          <li><strong>После первой:</strong> деньги посчитаны, комплаенс подан, отдельный ресурс живёт, пятнадцать разговоров с реальными покупателями проведено.</li>
+          <li><strong>После второй:</strong> три подписанных поручения, одна сделка до задатка, первые оплаты за проверку объекта.</li>
+          <li><strong>После третьей:</strong> три закрытые сделки, из них минимум две — <strong>не из личной сети</strong>, человек номер два нанят.</li>
+        </ul>
+      </div>
+      <div class="card accent">
+        <h3>Правило поверх всего плана</h3>
+        <p style="font-family:var(--f-display);font-size:clamp(17px,1.7vw,23px);line-height:1.36;color:var(--ink)">Направление режется только тогда, когда инвестиционное за последние полгода дало маржи больше, чем оно само за год.</p>
+        <p>Не по календарю и не по желанию. Жильё и релокация — венчурный фонд этого перехода: они платят за него, пока новое не приносит ничего.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-part="12" data-name="90 дней">
+  <div class="wrap">
+    <p class="eyebrow">12 · Первые 90 дней</p>
+    <h2>Шесть дел — и ни одно из них не про дизайн</h2>
+    <ol class="steps">
+      <li><strong>Посчитать реальную выручку, маржу и свои часы по направлениям</strong> и смоделировать деньги на восемнадцать месяцев вперёд при нуле крупных сделок. Без этого решение «что резать» — угадывание.</li>
+      <li><strong>Комплаенс раньше маркетинга.</strong> Реестр агентов Каталонии, страхование ответственности и финансовая гарантия, письменный протокол по отмыванию, ревизия обещаний про вид на жительство на сайте.</li>
+      <li><strong>Отдельный ресурс инвестиционного направления на английском.</strong> Одна страница: позиция, форматы поручений, модель гонорара, критерии объектов. Не сайт — заявление о том, кто вы.</li>
+      <li><strong>Список ста двадцати владельцев и первая волна обхода.</strong> Список конечен и известен: триста пятьдесят семь кемпингов плюс масии целевых комарок.</li>
+      <li><strong>Замер голландской гипотезы:</strong> страница на нидерландском плюс пятнадцать разговоров с реальными покупателями и брокерами. Порядка тысячи евро.</li>
+      <li><strong>Статус проекта кемпинга на масии</strong> — превратить в факт или честно переоценить объект.</li>
+    </ol>
+    <p class="footnote"><strong>Чего в первых девяноста днях нет:</strong> редизайна текущего сайта · рекламы на страхование · соцсетей как канала · стенда на выставке (ехать делегатом можно и нужно, платить за стенд рано) · найма под новое направление · Италии и Австрии.</p>
+  </div>
+</section>
+
+<section class="slide" data-part="13" data-name="Технологии">
+  <div class="wrap">
+    <p class="eyebrow">13 · Где нужна технологическая система</p>
+    <h2>Узкое место — не программное обеспечение</h2>
+    <p>Компании не хватает поручений, публичной истории сделок и досягаемости клиента на его языке. Поэтому правило простое: <strong>каждая техническая задача привязана к одной из трёх непроверенных опор. Не привязана — не в плане.</strong></p>
+    <div class="cols c2">
+      <div class="card accent">
+        <h3>Что беру на себя</h3>
+        <ul class="plain">
+          <li><strong>Отдельный ресурс с английским и нидерландским</strong> и понятной аналитикой — откуда пришёл человек и сколько это стоило.</li>
+          <li><strong>База объектов и владельцев с историей контакта.</strong> Это не инструмент, а будущий актив компании: «нет» сегодня становится поручением через полтора года, если записано.</li>
+          <li><strong>Система клиентов и сделок</strong>, чтобы бизнес перестал жить в переписке и перестал зависеть от одного человека.</li>
+          <li><strong>Конвейер «документы объекта → расчёт и меморандум».</strong> Черновик делает машина, подпись и ответственность — человека. Модель не считает доходность и не выдумывает цифры: пустое поле остаётся пустым.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Чего строить не буду</h3>
+        <ul class="plain dash">
+          <li>Свой портал объектов — есть Idealista, и показывать пока нечего</li>
+          <li>Чат-ботов и квизы на клиентских страницах: при таком чеке говорят с человеком, а бот ломает позицию советника</li>
+          <li>Автоматическую оценку отелей и кемпингов: в комарке пять-пятнадцать сделок в год, модель даст шум</li>
+          <li>Систему управления клиентами с нуля и мобильное приложение</li>
+          <li>Автоматизацию русскоязычного контента — это масштабирование канала, который не ведёт ни к целевому покупателю, ни к каталонскому продавцу</li>
+        </ul>
+      </div>
+    </div>
+    <p class="footnote">Порядок поставки: первое — не система управления клиентами, а страница на английском и рабочая база. И порог внедрения: система не внедряется, если добавляет владелице больше пятнадцати минут в день. Первичное наполнение базы делает партнёр по её перепискам, а не она сама. Типовой провал такого проекта — красивая система, которую некому заполнять; через полгода данные снова в мессенджере.</p>
+  </div>
+</section>
+
+<section class="slide" data-part="14" data-name="Вывод">
+  <div class="wrap">
+    <p class="eyebrow plain">Вывод</p>
+    <div class="verdict">
+      <p>Перейти в инвестиционные сделки возможно.</p>
+      <p>Но это не расширение существующего сайта услугами «для инвесторов». Это создание отдельной компетенции, отдельной репутации, собственного потока объектов и своей цифровой инфраструктуры.</p>
+      <p>Переход делается постепенно, с сохранением текущего денежного потока.</p>
+    </div>
+    <p class="footnote">Свод по десяти отчётам рабочей группы, август 2026. Работа кабинетная: прямого доступа к сайтам и первичным отчётам консультантов не было, всё восстановлено по поисковой выдаче. Реальных цифр компании нет ни в одном документе — вся экономика здесь модель на рыночных ставках. Прежде чем называть цифру в переговорах, берите её из первоисточника.</p>
   </div>
 </section>
 
@@ -974,59 +513,50 @@ td b{color:var(--ink)}
 
 <script>
 (function(){
-  var deck = document.getElementById('deck');
-  var slides = Array.prototype.slice.call(document.querySelectorAll('.slide'));
-  var bar = document.getElementById('bar');
-  var railNum = document.getElementById('railNum');
-  var railPart = document.getElementById('railPart');
+  var deck=document.getElementById('deck');
+  var slides=Array.prototype.slice.call(document.querySelectorAll('.slide'));
+  var bar=document.getElementById('bar');
+  var railNum=document.getElementById('railNum');
+  var railPart=document.getElementById('railPart');
 
   function update(){
-    var max = deck.scrollHeight - deck.clientHeight;
-    var pct = max > 0 ? (deck.scrollTop / max) * 100 : 0;
-    bar.style.width = pct + '%';
+    var max=deck.scrollHeight-deck.clientHeight;
+    bar.style.width=(max>0?(deck.scrollTop/max)*100:0)+'%';
   }
-  deck.addEventListener('scroll', update, {passive:true});
-  window.addEventListener('resize', update);
+  deck.addEventListener('scroll',update,{passive:true});
+  window.addEventListener('resize',update);
   update();
 
-  if ('IntersectionObserver' in window){
-    var io = new IntersectionObserver(function(entries){
-      entries.forEach(function(e){
-        if (e.isIntersecting){
-          railNum.textContent = e.target.dataset.part;
-          railPart.textContent = e.target.dataset.name;
+  if('IntersectionObserver' in window){
+    var io=new IntersectionObserver(function(es){
+      es.forEach(function(e){
+        if(e.isIntersecting){
+          railNum.textContent=e.target.dataset.part;
+          railPart.textContent=e.target.dataset.name;
         }
       });
-    }, {root: deck, threshold: 0.5});
-    slides.forEach(function(s){ io.observe(s); });
+    },{root:deck,threshold:0.5});
+    slides.forEach(function(s){io.observe(s);});
   }
 
   function current(){
-    var top = deck.scrollTop;
-    var idx = 0;
-    for (var i = 0; i < slides.length; i++){
-      if (slides[i].offsetTop <= top + 8) idx = i;
-    }
+    var top=deck.scrollTop,idx=0;
+    for(var i=0;i<slides.length;i++){ if(slides[i].offsetTop<=top+8) idx=i; }
     return idx;
   }
-  function go(dir){
-    var i = current() + dir;
-    if (i < 0) i = 0;
-    if (i > slides.length - 1) i = slides.length - 1;
-    deck.scrollTo({top: slides[i].offsetTop, behavior: 'smooth'});
+  function go(d){
+    var i=current()+d;
+    if(i<0) i=0;
+    if(i>slides.length-1) i=slides.length-1;
+    deck.scrollTo({top:slides[i].offsetTop,behavior:'smooth'});
   }
-  document.addEventListener('keydown', function(ev){
-    if (ev.metaKey || ev.ctrlKey || ev.altKey) return;
-    var k = ev.key;
-    if (k === 'ArrowDown' || k === 'ArrowRight' || k === 'PageDown' || k === ' '){
-      ev.preventDefault(); go(1);
-    } else if (k === 'ArrowUp' || k === 'ArrowLeft' || k === 'PageUp'){
-      ev.preventDefault(); go(-1);
-    } else if (k === 'Home'){
-      ev.preventDefault(); deck.scrollTo({top:0, behavior:'smooth'});
-    } else if (k === 'End'){
-      ev.preventDefault(); deck.scrollTo({top: deck.scrollHeight, behavior:'smooth'});
-    }
+  document.addEventListener('keydown',function(ev){
+    if(ev.metaKey||ev.ctrlKey||ev.altKey) return;
+    var k=ev.key;
+    if(k==='ArrowDown'||k==='ArrowRight'||k==='PageDown'||k===' '){ev.preventDefault();go(1);}
+    else if(k==='ArrowUp'||k==='ArrowLeft'||k==='PageUp'){ev.preventDefault();go(-1);}
+    else if(k==='Home'){ev.preventDefault();deck.scrollTo({top:0,behavior:'smooth'});}
+    else if(k==='End'){ev.preventDefault();deck.scrollTo({top:deck.scrollHeight,behavior:'smooth'});}
   });
 })();
 </script>
